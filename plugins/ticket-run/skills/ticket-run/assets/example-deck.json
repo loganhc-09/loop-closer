@@ -1,0 +1,21 @@
+{
+  "title": "Ticket Run",
+  "day": "2026-09-14",
+  "anchor": {
+    "id": "send-invoice",
+    "text": "Sam's invoice goes out today. The one rule.",
+    "doneText": "Invoice SENT. That was the whole game."
+  },
+  "cards": [
+    {"id": "text-dana", "size": "S", "tag": "text", "title": "Text Dana about Saturday", "first": "\"Hey, still on for Sat? 10 works for me.\" Send."},
+    {"id": "text-mom", "size": "S", "tag": "text", "title": "Text Mom back", "first": "\"Sorry, crazy week. Call you Sunday?\" Send."},
+    {"id": "reply-landlord", "size": "S", "tag": "email", "title": "Reply to the landlord about the leak", "first": "Open his email. \"Thursday morning works, anytime after 9.\" Send."},
+    {"id": "dentist", "size": "S", "tag": "call", "title": "Book the dentist", "first": "Call, or use the online form. First slot they have in October. Done."},
+    {"id": "send-invoice", "size": "M", "tag": "email", "due": "today", "title": "Send the September invoice to Sam", "first": "Open last month's invoice. Duplicate it. Change the dates and line items. Send."},
+    {"id": "decide-conf", "size": "M", "title": "Decide whether to go to the November conference", "first": "Pick one: (a) go, (b) skip, (c) ask if they'll comp the ticket. Then send the email that matches. Deciding is the task."},
+    {"id": "fix-bio", "size": "M", "title": "Fix the bio on the website", "first": "Open the about page. Replace the first paragraph with what you'd say out loud. Ship it."},
+    {"id": "review-priya", "size": "L", "tag": "doc", "title": "Review Priya's proposal draft", "first": "Open it. Comment on the intro only. Then the next section if the timer's still running."},
+    {"id": "expense-report", "size": "L", "title": "Do the expense report", "first": "Open the form. Enter the three receipts you can see in your inbox. Submit what you have."},
+    {"id": "deck-v2", "size": "BOSS", "title": "Rework the pitch deck for Thursday", "first": "Open the deck. Fix slide 2 only. Stop there if you need to."}
+  ]
+}
