@@ -100,8 +100,14 @@ warnings: a missing first move on a BOSS is the kind of thing that makes the car
   declare it: the page then saves completions to `days/<day>` and you can read them back with
   `read_db` at the end of the day. Without it, the page saves in the browser only and the
   cash-out screen has a "copy recap" button they paste to you.
-- **Otherwise**, write the file somewhere that won't vanish and open it: `open ticket-run.html`
-  on macOS. Say where it is.
+- **If you're in claude.ai** (code sandbox, no Artifact tool, no `open`), run the build script
+  in the sandbox, read the built file back, and put its contents verbatim into an HTML artifact.
+  Don't retype or trim it; the page is ~65KB and every byte is wired. Tell them to tap the
+  full-screen or open-in-new-tab control so the swipes have room. Two things to say once:
+  progress may not survive a refresh inside the artifact viewer, so cash out and copy the recap
+  before closing; and "publish" on the artifact gives them a link that works on a phone.
+- **Otherwise** (a terminal with a filesystem), write the file somewhere that won't vanish and
+  open it: `open ticket-run.html` on macOS. Say where it is.
 
 ### 6. Hand it over in under ten lines
 
