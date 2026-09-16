@@ -1,0 +1,638 @@
+<meta charset="utf-8">
+<title>Ticket Run</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FFE94A; --ink:#141414; --ink-soft:#4a4520; --card:#FFF9DC; --card-edge:#141414;
+  --pink:#FF2D87; --cobalt:#2B4CFF; --mint:#2EE6A6; --orange:#FF7A1A; --paper:#FFFFFF; --lilac:#D9C8FF;
+  --display:'Bungee','Rubik Mono One',Impact,sans-serif; --body:'Rubik','Helvetica Neue',Arial,sans-serif; --mono:'DM Mono','SFMono-Regular',Menlo,monospace;
+  --shadow:6px 6px 0 var(--ink);
+}
+*{box-sizing:border-box}
+html{color-scheme:light only}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;transition:background .6s}
+body.surge{background:#FFB3D1}
+body.hard{background:#CFE0FF}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(20,20,20,.08) 1px,transparent 1px);background-size:14px 14px;pointer-events:none;z-index:0}
+button{font-family:inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+code{font-family:var(--mono);font-size:.9em;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:4px}
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:14px 14px 96px;display:flex;flex-direction:column;gap:12px}
+
+.marquee{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.marquee h1{font-family:var(--display);font-size:22px;margin:0;line-height:1}
+.marquee .date{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.marquee .clock{font-family:var(--mono);font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:4px 8px;box-shadow:3px 3px 0 var(--ink)}
+
+.board{background:var(--ink);color:var(--ground);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:76px repeat(3,1fr);gap:8px 10px;box-shadow:var(--shadow);border:2px solid var(--ink);align-items:center}
+.ring{grid-row:1/3;width:76px;height:76px;position:relative}
+.ring svg{width:76px;height:76px;transform:rotate(-90deg)}
+.ring .bg{fill:none;stroke:rgba(255,233,74,.18);stroke-width:8}
+.ring .fg{fill:none;stroke:var(--mint);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.2,.9,.3,1.2)}
+.ring .n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-size:18px;line-height:1}
+.ring .n small{font-family:var(--mono);font-size:8px;letter-spacing:.1em;opacity:.7;font-weight:400}
+.cell{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lab{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.val{font-family:var(--display);font-size:20px;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.val.pink{color:var(--pink)} .val.mint{color:var(--mint)} .val.orange{color:var(--orange)}
+.levelbar{grid-column:1/-1;display:flex;flex-direction:column;gap:4px}
+.levelbar .track{height:10px;background:rgba(255,233,74,.18);border-radius:100px;overflow:hidden;border:1px solid rgba(255,233,74,.35)}
+.levelbar .fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--orange));width:0%;transition:width .5s cubic-bezier(.2,.9,.3,1.2)}
+.levelbar .lv{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+.levelbar .lv b{color:var(--mint);font-weight:500}
+
+.ticker{overflow:hidden;white-space:nowrap;border:2px solid var(--ink);border-radius:100px;background:var(--mint);padding:5px 0;font-family:var(--mono);font-size:11px}
+.ticker span{display:inline-block;padding-left:100%;animation:tick 28s linear infinite}
+@keyframes tick{to{transform:translateX(-100%)}}
+.ticker[hidden]{display:none}
+
+.round,.surgeb,.coach{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);border-radius:10px;padding:8px 12px;box-shadow:3px 3px 0 var(--ink)}
+.round{background:var(--paper)}
+.round .tag,.surgeb .tag{font-family:var(--display);font-size:11px;background:var(--cobalt);color:#fff;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.round .txt,.surgeb .txt{font-size:13px;font-weight:500;flex:1}
+.round .txt em,.surgeb em{font-style:normal;font-family:var(--mono);color:var(--cobalt)}
+.surgeb{background:var(--pink);color:#fff}.surgeb .tag{background:var(--ink);color:var(--ground)}.surgeb em{color:#fff}
+.surgeb[hidden]{display:none}
+.coach{background:var(--lilac);font-size:13px;font-weight:500}
+.coach .who{font-family:var(--display);font-size:10px;white-space:nowrap}
+.tonight{display:flex;align-items:center;gap:10px;background:var(--pink);color:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 12px;box-shadow:3px 3px 0 var(--ink)}
+.tonight[hidden]{display:none}
+.tonight .tag{font-family:var(--display);font-size:11px;white-space:nowrap}
+.tonight .txt{font-size:13px;font-weight:500;flex:1}
+.tonight button{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700}
+.tonight.done{background:var(--mint);color:var(--ink)}
+
+.stack{position:relative;height:340px}
+.card{position:absolute;inset:0;background:var(--card);border:3px solid var(--card-edge);border-radius:18px;padding:16px 18px 14px;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow);user-select:none;touch-action:none;cursor:grab;transform-origin:50% 120%;will-change:transform}
+.card.top{z-index:3}
+.card.b1{z-index:2;transform:translateY(12px) scale(.96) rotate(-1.5deg);box-shadow:4px 4px 0 var(--ink)}
+.card.b2{z-index:1;transform:translateY(24px) scale(.92) rotate(2deg);box-shadow:2px 2px 0 var(--ink)}
+.card.b1 > *,.card.b2 > *{visibility:hidden}
+.card.t1{background:#FFF9DC}.card.t2{background:#E6FFF5}.card.t3{background:#FFE4EF}.card.t4{background:#E3EBFF}.card.t5{background:#FFEFD9}
+.card .meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:100px;border:2px solid var(--ink);background:#fff}
+.chip.S{background:var(--mint)} .chip.M{background:#FFD1E5} .chip.L{background:#CFE0FF} .chip.BOSS{background:var(--ink);color:var(--ground)}
+.chip.due{background:var(--pink);color:#fff} .chip.live{background:var(--ground)} .chip.opened{background:var(--lilac)}
+.card h2{font-family:var(--body);font-weight:900;font-size:21px;line-height:1.15;margin:0;letter-spacing:-.01em;text-wrap:balance;flex:1}
+.card .first{background:#fff;border:2px dashed var(--ink);border-radius:10px;padding:7px 10px;font-size:13px}
+.card .first b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:2px;color:var(--cobalt)}
+.card .foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.card .foot .xp{font-family:var(--display);font-size:16px;color:var(--pink);white-space:nowrap}
+.card .open{background:var(--cobalt);color:#fff;border:2px solid var(--ink);border-radius:100px;padding:4px 10px;font-family:var(--mono);font-size:11px;box-shadow:2px 2px 0 var(--ink);text-decoration:none;white-space:nowrap}
+.stamp{position:absolute;top:22px;font-family:var(--display);font-size:22px;padding:4px 12px;border:4px solid;border-radius:8px;opacity:0;transform:rotate(-12deg);pointer-events:none}
+.stamp.go{right:18px;color:var(--cobalt);border-color:var(--cobalt);transform:rotate(12deg)}
+.stamp.nah{left:18px;color:var(--pink);border-color:var(--pink)}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;border:3px dashed var(--ink);border-radius:18px;padding:20px}
+.empty h3{font-family:var(--display);margin:0;font-size:20px}
+
+.actions{display:grid;grid-template-columns:1fr auto 1.4fr;gap:10px}
+.big{border:3px solid var(--ink);border-radius:14px;padding:14px 10px;font-family:var(--display);font-size:15px;box-shadow:var(--shadow);transition:transform .08s,box-shadow .08s;line-height:1}
+.big:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--ink)}
+.big.nah{background:#fff;color:var(--ink)} .big.go{background:var(--cobalt);color:#fff}
+.big.shrink{background:var(--orange);color:var(--ink);font-size:12px}
+.big.shrink[hidden]{display:none}
+.hint{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.tools button{background:#fff;border:2px solid var(--ink);border-radius:100px;padding:6px 11px;font-family:var(--mono);font-size:11px;box-shadow:2px 2px 0 var(--ink)}
+.tools button.on{background:var(--ink);color:var(--ground)}
+.strip{display:flex;gap:6px;flex-wrap:wrap}
+.strip .dot{width:14px;height:14px;border-radius:4px;border:2px solid var(--ink);background:#fff}
+.strip .dot.done{background:var(--mint)} .strip .dot.chip{background:linear-gradient(90deg,var(--mint) 50%,#fff 50%)} .strip .dot.skip{background:#ddd} .strip .dot.boss{border-radius:50%}
+.parked{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:8px 12px;font-size:12px}
+.parked b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.parked ul{margin:4px 0 0;padding-left:18px}
+.parked[hidden]{display:none}
+
+.overlay{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(20,20,20,.35)}
+.overlay.on{display:flex}
+.sheet{width:100%;max-width:480px;max-height:96vh;overflow:auto;background:var(--paper);border:3px solid var(--ink);border-radius:20px;box-shadow:8px 8px 0 var(--ink);padding:18px;display:flex;flex-direction:column;gap:14px}
+.sheet h3{font-family:var(--display);font-size:18px;margin:0}
+.sheet p{margin:0;font-size:13px}
+.sheet .note{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.sheet textarea,.sheet input[type=text]{width:100%;border:2px solid var(--ink);border-radius:10px;padding:10px;font-family:var(--body);font-size:14px}
+.sheet textarea{min-height:110px;resize:vertical}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pills button{border:2px solid var(--ink);background:#fff;border-radius:100px;padding:7px 12px;font-family:var(--mono);font-size:12px}
+.pills button.on{background:var(--ink);color:var(--ground)}
+.sheet .row{display:flex;gap:8px;flex-wrap:wrap}
+.sheet .primary{flex:1;background:var(--cobalt);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:12px;font-family:var(--display);font-size:14px;box-shadow:4px 4px 0 var(--ink)}
+.sheet .ghost{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:12px;font-family:var(--mono);font-size:12px}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.menu button{text-align:left;border:2px solid var(--ink);border-radius:10px;padding:10px;background:var(--card);font-size:13px;font-weight:500;box-shadow:3px 3px 0 var(--ink)}
+.hacks{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
+.hacks .h{border:2px solid var(--ink);border-radius:10px;padding:8px 10px;background:var(--card);font-size:12px}
+.hacks .h b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt);margin-bottom:2px}
+
+.overlay.focus .sheet{background:var(--ink);color:var(--ground);min-height:min(96vh,600px)}
+.focus .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.focus h2{font-family:var(--body);font-weight:900;font-size:24px;line-height:1.15;margin:0;text-wrap:balance}
+.focus .first{background:rgba(255,233,74,.1);border:2px dashed rgba(255,233,74,.5);border-radius:10px;padding:10px 12px;font-size:14px}
+.focus .first b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:block;color:var(--mint);margin-bottom:3px}
+.focus .ifthen{font-family:var(--mono);font-size:11px;opacity:.8;line-height:1.5}
+.disk{display:flex;align-items:center;justify-content:center;gap:16px;margin:4px 0}
+.disk .pie{width:120px;height:120px;border-radius:50%;border:4px solid var(--ground);background:conic-gradient(var(--pink) 0deg,rgba(255,233,74,.12) 0deg);transition:background .9s linear;position:relative;flex:none}
+.disk .pie.over{border-color:var(--pink);animation:blink 1s steps(2) infinite}
+.timer{font-family:var(--display);font-size:44px;line-height:1;font-variant-numeric:tabular-nums;color:var(--mint)}
+.timer.over{color:var(--pink);font-size:28px}
+@keyframes blink{50%{opacity:.4}}
+.tpick{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tpick button,.focus .mini{background:transparent;color:var(--ground);border:2px solid rgba(255,233,74,.4);border-radius:100px;padding:5px 12px;font-family:var(--mono);font-size:12px}
+.tpick button.on{background:var(--ground);color:var(--ink);border-color:var(--ground)}
+.focus .mini.done{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+.focus .row{display:flex;gap:8px;flex-wrap:wrap}
+.focus textarea,.focus input[type=text]{width:100%;background:rgba(255,255,255,.06);color:var(--ground);border:2px solid rgba(255,233,74,.3);border-radius:10px;padding:10px;font-family:var(--body);font-size:14px}
+.focus textarea{resize:vertical;min-height:50px}
+.focus .park{display:flex;gap:6px}
+.focus .park input{flex:1}
+.focus .park button{background:var(--lilac);color:var(--ink);border:2px solid var(--lilac);border-radius:10px;padding:0 12px;font-family:var(--mono);font-size:11px}
+.focus .done-btn{margin-top:auto;background:var(--mint);color:var(--ink);border:3px solid var(--mint);border-radius:16px;padding:20px;font-family:var(--display);font-size:22px;box-shadow:6px 6px 0 var(--pink);transition:transform .08s,box-shadow .08s}
+.focus .done-btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--pink)}
+.focus .ghost{flex:1;background:transparent;color:var(--ground);border:2px solid rgba(255,233,74,.4);border-radius:10px;padding:10px;font-family:var(--mono);font-size:12px}
+.bd{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;opacity:.85}
+.bd .pulse{width:10px;height:10px;border-radius:50%;background:var(--mint);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.6);opacity:.5}}
+
+.overlay.reward{background:rgba(20,20,20,.5)}
+.reward .sheet{background:var(--ground);align-items:center;text-align:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.reward .xpbig{font-family:var(--display);font-size:72px;color:var(--pink);line-height:1;text-shadow:5px 5px 0 var(--ink)}
+.reward .sub{font-family:var(--display);font-size:20px;background:var(--ink);color:var(--ground);padding:6px 14px;border-radius:8px}
+.reward .tix{font-family:var(--mono);font-size:14px;background:#fff;border:2px solid var(--ink);padding:6px 12px;border-radius:100px;box-shadow:3px 3px 0 var(--ink)}
+.reward .tix.jack{background:var(--orange);font-family:var(--display);font-size:22px;animation:shake .5s}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg) scale(1.1)}75%{transform:rotate(6deg) scale(1.1)}}
+.reward .lvlup{font-family:var(--display);font-size:16px;color:var(--cobalt);background:#fff;border:3px solid var(--ink);padding:8px 14px;border-radius:10px;box-shadow:4px 4px 0 var(--ink)}
+.reward .bonus{font-family:var(--mono);font-size:12px}
+.reward .row{width:100%}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:25}
+body.shake{animation:bodyshake .4s}
+@keyframes bodyshake{0%,100%{transform:translate(0)}20%{transform:translate(-6px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(4px,-2px)}}
+
+.recap{display:flex;flex-direction:column;gap:6px;max-height:36vh;overflow:auto}
+.recap .r{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:2px solid var(--ink);border-radius:8px;background:var(--card);font-size:13px}
+.recap .r .x{font-family:var(--display);color:var(--pink);white-space:nowrap}
+.totals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.totals div{background:var(--ink);color:var(--ground);border-radius:10px;padding:10px;text-align:center}
+.totals .n{font-family:var(--display);font-size:24px;color:var(--mint)}
+.totals .l{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;gap:8px;padding:10px 14px 14px;background:linear-gradient(transparent,var(--ground) 40%)}
+.bar button{background:#fff;border:2px solid var(--ink);border-radius:100px;padding:8px 14px;font-family:var(--mono);font-size:12px;box-shadow:3px 3px 0 var(--ink)}
+.bar button.cash{background:var(--mint)}
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:100px;font-family:var(--mono);font-size:12px;z-index:40;transition:transform .3s cubic-bezier(.2,1.2,.4,1);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+.toast.on{transform:translateX(-50%) translateY(0)}
+@media (max-width:480px){.stack{height:300px}.card h2{font-size:19px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="marquee">
+    <div><h1 id="h1">Ticket Run</h1><div class="date" id="dateLine"></div></div>
+    <div class="clock" id="clock">--:--</div>
+  </div>
+
+  <div class="board">
+    <div class="ring"><svg viewBox="0 0 76 76"><circle class="bg" cx="38" cy="38" r="31"/><circle class="fg" id="ringFg" cx="38" cy="38" r="31" stroke-dasharray="194.8" stroke-dashoffset="194.8"/></svg><div class="n"><span id="ringN">0/8</span><small>GOAL</small></div></div>
+    <div class="cell"><span class="lab">XP</span><span class="val pink" id="sXp">0</span></div>
+    <div class="cell"><span class="lab">Tickets</span><span class="val orange" id="sTix">0</span></div>
+    <div class="cell"><span class="lab">Combo</span><span class="val mint" id="sCombo">×1</span></div>
+    <div class="cell" style="grid-column:2/-1"><span class="lab">Combo expires</span><span class="val" id="sExp" style="font-size:14px;font-family:var(--mono)">—</span></div>
+    <div class="levelbar">
+      <div class="track"><div class="fill" id="lvFill"></div></div>
+      <div class="lv"><span>LV <b id="lvNum">1</b> · <span id="lvName">Warming Up</span></span><span id="lvNext">60 to next</span></div>
+    </div>
+  </div>
+
+  <div class="ticker" id="ticker" hidden><span id="tickerTxt"></span></div>
+  <div class="surgeb" id="surge" hidden><span class="tag">⚡ SURGE</span><span class="txt">Double XP for <em id="surgeT">5:00</em>. Anything you clear right now counts twice.</span></div>
+  <div class="round"><span class="tag" id="rTag">ROUND 1</span><span class="txt" id="rTxt">Loading…</span></div>
+  <div class="coach"><span class="who">COACH</span><span id="coachTxt">Just one. The smallest one.</span></div>
+  <div class="tonight" id="tonight" hidden><span class="tag">DUE</span><span class="txt" id="tonightTxt"></span><button id="tonightBtn">Jump to it</button></div>
+
+  <div class="stack" id="stack"></div>
+
+  <div class="actions">
+    <button class="big nah" id="btnNah">NOT TODAY</button>
+    <button class="big shrink" id="btnShrink" hidden>SHRINK IT</button>
+    <button class="big go" id="btnGo">LET'S GO →</button>
+  </div>
+  <div class="hint">swipe right to start · left to pass · double-tap = go · ← → keys work too</div>
+  <div class="tools">
+    <button id="diceBtn">🎲 pick for me</button>
+    <button id="hardBtn">🔒 hard mode</button>
+    <button id="noiseBtn">🌊 brown noise</button>
+    <button id="sndBtn">🔊 sound</button>
+    <button id="hacksBtn">? hacks in play</button>
+  </div>
+  <div class="parked" id="parked" hidden><b>Parking lot</b><ul id="parkedList"></ul></div>
+  <div class="strip" id="strip"></div>
+</div>
+
+<div class="bar">
+  <button id="addBtn">+ dump my list</button>
+  <button id="cashBtn" class="cash">cash out</button>
+</div>
+
+<canvas id="confetti"></canvas>
+<div class="toast" id="toast"></div>
+
+<!-- SETUP -->
+<div class="overlay" id="setup"><div class="sheet">
+  <h3>Before you swipe</h3>
+  <p id="setupSummary">Three taps. You set the target, so it's yours.</p>
+  <div><p class="note" style="margin-bottom:6px">HOW MANY TODAY?</p><div class="pills" id="goalPick"></div></div>
+  <div><p class="note" style="margin-bottom:6px">YOUR TREAT WHILE WORKING (temptation bundling)</p><div class="pills" id="bundlePick"></div></div>
+  <div><p class="note" style="margin-bottom:6px">STAKE (optional, loss aversion works)</p><input type="text" id="stake" placeholder="e.g. If I'm under 5 by 6pm I tell a friend and buy dinner"></div>
+  <p class="note">You already have +15 XP for showing up and reading this. Head start's real.</p>
+  <div class="row"><button class="primary" id="setupGo">DEAL ME IN</button></div>
+</div></div>
+
+<!-- FOCUS -->
+<div class="overlay focus" id="focus"><div class="sheet">
+  <div class="eyebrow" id="fEyebrow">IN PLAY</div>
+  <h2 id="fTitle"></h2>
+  <div class="first"><b>First move</b><span id="fFirst"></span></div>
+  <div class="ifthen" id="fIf"></div>
+  <div class="disk"><div class="pie" id="fPie"></div><div><div class="timer" id="fTimer">10:00</div><div class="tpick"><button data-m="5">5</button><button data-m="10" class="on">10</button><button data-m="25">25</button></div></div></div>
+  <div class="row"><button class="mini" id="fOpened">I opened it (+3)</button><a class="mini" id="fLink" href="#" target="_blank" rel="noopener" hidden style="text-decoration:none">↗ open the thing</a></div>
+  <div class="park"><input type="text" id="fPark" placeholder="Intrusive thought? Park it here, stay in."><button id="fParkBtn">PARK</button></div>
+  <textarea id="fNote" placeholder="What happened? (optional, one line)"></textarea>
+  <div class="bd"><span class="pulse"></span><span id="bdTxt">Body double online.</span></div>
+  <button class="done-btn" id="fDone">DONE ✓</button>
+  <div class="row"><button class="ghost" id="fChip">did the first move only (+chip)</button><button class="ghost" id="fShelve">shelve it</button></div>
+</div></div>
+
+<!-- WALL OF AWFUL -->
+<div class="overlay" id="awful"><div class="sheet">
+  <h3>What's the awful part?</h3>
+  <p>Name it and the wall gets a door. Pick one.</p>
+  <div class="menu">
+    <button data-a="unclear">🌫 Unclear<br><small>I don't know what "done" is</small></button>
+    <button data-a="scary">😬 Scary<br><small>someone might judge it</small></button>
+    <button data-a="boring">🥱 Boring<br><small>my brain refuses</small></button>
+    <button data-a="big">🏔 Big<br><small>there's no edge to grab</small></button>
+  </div>
+  <div class="row"><button class="ghost" id="awfulClose">never mind</button></div>
+</div></div>
+
+<!-- RECESS -->
+<div class="overlay" id="recess"><div class="sheet">
+  <h3>🛝 RECESS</h3>
+  <p>Three clears. You earned 3 minutes. Pick one, guilt-free, timer runs.</p>
+  <div class="menu" id="recessMenu"></div>
+  <div class="timer" id="recessTimer" style="text-align:center;color:var(--pink)">3:00</div>
+  <div class="row"><button class="primary" id="recessDone">BACK IN</button></div>
+</div></div>
+
+<!-- REWARD -->
+<div class="overlay reward" id="reward"><div class="sheet">
+  <div class="xpbig" id="rXp">+25</div>
+  <div class="sub" id="rSub">CLEARED</div>
+  <div class="tix" id="rTix">🎟 +12 tickets</div>
+  <div class="bonus" id="rBonus"></div>
+  <div class="lvlup" id="rLvl" hidden>LEVEL UP</div>
+  <div class="row"><button class="primary" id="rChain">CHAIN IT → next card</button><button class="ghost" id="rBrag">brag</button><button class="ghost" id="rBack">deck</button></div>
+</div></div>
+
+<!-- ADD -->
+<div class="overlay" id="add"><div class="sheet">
+  <h3>Dump your list</h3>
+  <p>One per line. They go on top. Prefix with <code>!</code> for a boss.</p>
+  <textarea id="addText" placeholder="Reply to that email&#10;!Finish the deck for Tuesday&#10;Book the dentist"></textarea>
+  <div class="pills"><span class="note" style="align-self:center">Default size:</span><button data-s="S" class="on">S · 5m</button><button data-s="M">M · 15m</button><button data-s="L">L · 30m</button></div>
+  <div class="row"><button class="primary" id="addGo">ADD TO DECK</button><button class="ghost" id="addClose">close</button></div>
+</div></div>
+
+<!-- HACKS -->
+<div class="overlay" id="hacksSheet"><div class="sheet">
+  <h3>Hacks in play</h3>
+  <div class="hacks" id="hacksList"></div>
+  <div class="row"><button class="ghost" id="hacksClose">close</button></div>
+</div></div>
+
+<!-- CASH OUT -->
+<div class="overlay" id="cash"><div class="sheet">
+  <h3>Cash out</h3>
+  <div class="totals"><div><div class="n" id="cXp">0</div><div class="l">XP</div></div><div><div class="n" id="cDone">0</div><div class="l">cleared</div></div><div><div class="n" id="cTix">0</div><div class="l">tickets</div></div></div>
+  <p id="cLine"></p>
+  <div class="recap" id="cList"></div>
+  <p class="note" id="cSave">Saved locally.</p>
+  <div class="row"><button class="primary" id="cCopy">COPY RECAP</button><button class="ghost" id="cClose">keep going</button></div>
+</div></div>
+
+<script>
+// ───────────────────────── CONFIG (injected by build.py) ─────────────────────────
+const CFG={"title": "Ticket Run", "tagline": "Task Tinder, jacked", "day": "2026-09-14", "dateLine": "Mon · Sep 14 2026", "goals": [3, 4, 6], "anchor": {"id": "send-invoice", "text": "Sam's invoice goes out today. The one rule.", "doneText": "Invoice SENT. That was the whole game."}, "bundle": [{"key": "coffee", "label": "☕ coffee"}, {"key": "playlist", "label": "🎧 the playlist"}, {"key": "snack", "label": "🍫 snack"}, {"key": "sun", "label": "☀️ window seat"}], "rounds": {"morning": "Morning. Whole day is yours now. Texts, then the quick replies. Build the combo.", "midday": "Early afternoon. Mediums and one large. One card, one timer.", "afternoon": "Late afternoon. Boss window. Take the big one while the energy holds.", "night": "Evening. Whatever's due is the only card that matters. Then cash out."}, "setupSummary": "Your list is loaded: 2 texts, 1 quick email, 1 small, 3 mediums, 2 larges, 1 boss.", "cards": [{"id": "text-dana", "size": "S", "tag": "text", "title": "Text Dana about Saturday", "first": "\"Hey, still on for Sat? 10 works for me.\" Send."}, {"id": "text-mom", "size": "S", "tag": "text", "title": "Text Mom back", "first": "\"Sorry, crazy week. Call you Sunday?\" Send."}, {"id": "reply-landlord", "size": "S", "tag": "email", "title": "Reply to the landlord about the leak", "first": "Open his email. \"Thursday morning works, anytime after 9.\" Send."}, {"id": "dentist", "size": "S", "tag": "call", "title": "Book the dentist", "first": "Call, or use the online form. First slot they have in October. Done."}, {"id": "decide-conf", "size": "M", "title": "Decide whether to go to the November conference", "first": "Pick one: (a) go, (b) skip, (c) ask if they'll comp the ticket. Then send the email that matches. Deciding is the task."}, {"id": "fix-bio", "size": "M", "title": "Fix the bio on the website", "first": "Open the about page. Replace the first paragraph with what you'd say out loud. Ship it."}, {"id": "review-priya", "size": "L", "tag": "doc", "title": "Review Priya's proposal draft", "first": "Open it. Comment on the intro only. Then the next section if the timer's still running."}, {"id": "expense-report", "size": "L", "title": "Do the expense report", "first": "Open the form. Enter the three receipts you can see in your inbox. Submit what you have."}, {"id": "deck-v2", "size": "BOSS", "title": "Rework the pitch deck for Thursday", "first": "Open the deck. Fix slide 2 only. Stop there if you need to."}, {"id": "send-invoice", "size": "M", "tag": "email", "due": "today", "title": "Send the September invoice to Sam", "first": "Open last month's invoice. Duplicate it. Change the dates and line items. Send."}]};
+const XP={S:10,M:25,L:50,BOSS:100};
+const SEED=CFG.cards;
+const DECK_VERSION=1;
+const LEVELS=[[0,'Warming Up'],[60,'Inbox Gremlin'],[150,'Loop Closer'],[300,'Certified Menace'],[500,'Send-Button Royalty'],[800,'Final Boss of Procrastination'],[1200,'Untouchable']];
+const AWFUL={
+ unclear:{label:'unclear',move:'Write the one question you\'d ask someone if they were sitting here. That sentence is the task now.'},
+ scary:{label:'scary',move:'Write the worst possible version on purpose. Bad on purpose is allowed. Then fix one line.'},
+ boring:{label:'boring',move:'Bundle it: one song on, and you only work for the length of that song.'},
+ big:{label:'big',move:'Name the smallest visible piece with an edge you can grab. Do only that piece.'}
+};
+const RECESS=['💃 One song, full dance','🚶 Walk to the mailbox and back','💧 Big glass of water + stretch','📱 3 min of scrolling, timer on, no guilt','☀️ Stand in the sun, eyes closed','📸 Text a friend a brag','🍫 The snack. The real one.','🧠 Stare at the wall. Nothing. Legal.'];
+const HACKS=[
+ ['Interest · Novelty · Challenge · Urgency (Dodson)','ADHD runs on an interest-based nervous system, not importance. Random card colors, surge windows, hard mode, and the due banner hit all four.'],
+ ['Tiny habits + instant celebration (Fogg)','"I opened it" pays +3 XP immediately. Shaping: reward the start, not the finish.'],
+ ['Implementation intentions (Gollwitzer)','Every card has an if-then: "If stuck at 2 min → do the 30-second version." Pre-decided moves beat willpower.'],
+ ['Wall of Awful (Mahan)','Shrink It asks what the awful part is (unclear / scary / boring / big) and gives a door for that specific wall.'],
+ ['Temptation bundling (Milkman)','You picked a treat at setup. Focus mode reminds you to have it during, not after.'],
+ ['Endowed progress (Nunes & Drèze)','You started at +15 XP and the ring is never empty. People finish what looks started.'],
+ ['Goal gradient (Hull, Kivetz)','Effort rises near the end. "N to next" and the ring get louder as you close in.'],
+ ['Variable-ratio reward (Skinner)','Tickets are random every time, 8% jackpot. Unpredictable rewards hold attention longer than fixed ones.'],
+ ['Loss aversion (Kahneman & Tversky)','Combo has a visible expiry. Optional stake at setup. Losing a streak hurts more than gaining one feels good.'],
+ ['Body doubling','Focus mode has a live presence line. It\'s a stand-in; a real one is a person in the same room.'],
+ ['Visual timer (Time Timer)','The shrinking disk makes time visible. Time blindness is a core ADHD deficit, digits alone don\'t fix it.'],
+ ['Parking lot (externalized working memory)','Intrusive thoughts go in the park box without leaving focus. Captured, not chased.'],
+ ['Two-minute rule (Allen) + First Move','Smalls are "just do it now." Everything else has a 2-minute first move printed on the card.'],
+ ['Pre-commitment / Ulysses contract','Hard mode hides Not Today for 15 min at 1.5× XP. You bind future-you on purpose.'],
+ ['Choice architecture','Only 3 cards visible. "Pick for me" removes the decision entirely when choosing is the blocker.'],
+ ['Momentum then frog','Smalls stacked first for quick wins, bosses after. Coach nudges you at the frog when combo is up.'],
+ ['Planned breaks (Pomodoro / recess)','Every 3 clears, a real 3-minute dopamine menu. Rest is scheduled, so it isn\'t stolen.'],
+ ['Chaining','After a clear, "Chain it" opens the next card directly. No return to the deck, no re-deciding.'],
+ ['Beat the clock','Finishing before the timer pays a bonus. Artificial deadlines are real deadlines to this brain.'],
+ ['Done list + peak-end rule','The ticker shows what you cleared, and cash-out is designed as the high point. You remember the end.'],
+ ['Fresh start effect (Dai, Milkman)','New deck, new day. Temporal landmarks reset the ledger.'],
+ ['Self-determination theory (Deci & Ryan)','You chose the goal (autonomy), levels track competence, brag + body double cover relatedness.'],
+ ['Self-compassion (Neff)','Skips cost nothing, shelving gets kind copy. Shame is the procrastination engine, not the cure.'],
+ ['Tab-title timer + wake lock + haptics','The countdown lives in the browser tab so you see it from your inbox. Screen stays on, phone buzzes on clears.'],
+];
+const KEY='ticket-run-'+CFG.day;
+const ANCHOR=CFG.anchor||null;
+
+// ───────────────────────── STATE ─────────────────────────
+let S=load()||{};
+const D={xp:0,tix:0,combo:0,done:[],skips:{},shelved:[],order:null,custom:[],sound:true,lastDoneAt:0,skipRun:0,goal:0,bundle:'',stake:'',opened:{},parked:[],surgeUntil:0,hardUntil:0,sinceRecess:0,nextSurgeAt:0,seededHeadStart:false};
+for(const k in D)if(S[k]===undefined)S[k]=D[k];
+const cards=()=>[...S.custom,...SEED].reduce((a,c)=>(a[c.id]=c,a),{});
+if(!S.order||S.deckVersion!==DECK_VERSION){const customIds=S.custom.map(c=>c.id);const known=new Set(S.order||[]);const fresh=SEED.map(c=>c.id).filter(id=>!known.has(id));S.order=S.order?[...S.order.filter(id=>customIds.includes(id)||SEED.some(c=>c.id===id)),...fresh]:[...customIds,...SEED.map(c=>c.id)];S.deckVersion=DECK_VERSION}
+let current=null,dragging=false,dx=0,startX=0;
+let timerIv=null,timerEnd=0,timerMin=10,timerStart=0,focusCard=null,lastCleared=null;
+let db=null,dbDoc=null,wakeLock=null,recessIv=null;
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} if(dbDoc){dbDoc.set({day:CFG.day,title:CFG.title,goal:S.goal,stake:S.stake,xp:S.xp,tix:S.tix,done:S.done,shelved:S.shelved,skips:S.skips,custom:S.custom,parked:S.parked,updatedAt:new Date().toISOString()}).catch(()=>{})}}
+function shuf(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function level(xp){let li=0;for(let i=0;i<LEVELS.length;i++)if(xp>=LEVELS[i][0])li=i;return li}
+function mult(){let m=S.combo>=6?3:S.combo>=4?2:S.combo>=2?1.5:1;if(Date.now()<S.surgeUntil)m*=2;if(Date.now()<S.hardUntil)m*=1.5;return Math.round(m*10)/10}
+const cleared=()=>S.done.filter(d=>d.mode==='done').length;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function safeHref(u){u=String(u||'');return /^https?:\/\//i.test(u)?u:''}
+
+// ───────────────────────── SOUND + NOISE ─────────────────────────
+let AC=null;function ac(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function tone(f,t0,dur,type,vol){if(!S.sound)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type||'square';o.frequency.value=f;g.gain.setValueAtTime(0.0001,a.currentTime+t0);g.gain.exponentialRampToValueAtTime(vol||.12,a.currentTime+t0+.01);g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t0+dur);o.connect(g).connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05)}
+const snd={
+ win(c){const b=[523,659,784,1046];const up=Math.min(c,6)*30;b.forEach((f,i)=>tone(f+up,i*.08,.18,'square'));tone(1568+up,.34,.35,'triangle',.1)},
+ skip(){tone(220,0,.08,'sine',.08);tone(180,.08,.1,'sine',.06)},
+ jack(){[523,659,784,1046,1318,1568,2093].forEach((f,i)=>tone(f,i*.07,.25,'square',.12));[0,.5,1].forEach(t=>tone(2093,1+t*.15,.3,'triangle',.1))},
+ lvl(){[392,523,659,784,1046].forEach((f,i)=>tone(f,i*.1,.3,'triangle',.12))},
+ chip(){tone(660,0,.1,'square',.08);tone(880,.1,.15,'square',.08)},
+ ding(){[0,.25,.5].forEach(t=>tone(1318,t,.2,'sine',.15))},
+ tick(){tone(1200,0,.03,'square',.04)},
+ surge(){[880,1108,1318,1760].forEach((f,i)=>tone(f,i*.06,.2,'sawtooth',.08))}
+};
+let noiseNode=null,noiseGain=null;
+function toggleNoise(){const a=ac();if(!a)return;if(noiseNode){noiseGain.gain.linearRampToValueAtTime(0.0001,a.currentTime+.4);setTimeout(()=>{try{noiseNode.stop()}catch(e){}noiseNode=null},450);$('noiseBtn').classList.remove('on');return}
+  const len=a.sampleRate*4,buf=a.createBuffer(1,len,a.sampleRate),d=buf.getChannelData(0);let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.5}
+  noiseNode=a.createBufferSource();noiseNode.buffer=buf;noiseNode.loop=true;noiseGain=a.createGain();noiseGain.gain.value=0.0001;noiseNode.connect(noiseGain).connect(a.destination);noiseNode.start();noiseGain.gain.linearRampToValueAtTime(.18,a.currentTime+.8);$('noiseBtn').classList.add('on')}
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+
+// ───────────────────────── RENDER ─────────────────────────
+function queue(){const c=cards();return S.order.filter(id=>c[id]&&!S.done.find(d=>d.id===id)&&!S.shelved.includes(id))}
+function renderBoard(){
+  $('sXp').textContent=S.xp;$('sTix').textContent=S.tix;$('sCombo').textContent='×'+mult();
+  const g=S.goal||CFG.goals[1]||CFG.goals[0]||1,n=cleared();$('ringN').textContent=n+'/'+g;$('ringFg').style.strokeDashoffset=194.8*(1-Math.min(1,n/g));
+  if(n>=g)$('ringFg').style.stroke='var(--pink)';
+  const li=level(S.xp),cur=LEVELS[li][0],nxt=LEVELS[li+1]?LEVELS[li+1][0]:null;
+  $('lvNum').textContent=li+1;$('lvName').textContent=LEVELS[li][1];
+  $('lvFill').style.width=(nxt?Math.min(100,(S.xp-cur)/(nxt-cur)*100):100)+'%';
+  $('lvNext').textContent=nxt?(nxt-S.xp)+' to next':'MAX';
+  const t=$('tonight');
+  if(ANCHOR){t.hidden=false;const tdone=S.done.find(d=>d.id===ANCHOR.id&&d.mode==='done');t.classList.toggle('done',!!tdone);$('tonightTxt').textContent=tdone?ANCHOR.doneText:ANCHOR.text;$('tonightBtn').hidden=!!tdone}
+  const tk=$('ticker');if(S.done.length){tk.hidden=false;$('tickerTxt').textContent='DONE TODAY  ✓  '+S.done.slice().reverse().map(d=>d.title.split('(')[0].trim()).join('   ✓   ')}else tk.hidden=true;
+  const pk=$('parked');if(S.parked.length){pk.hidden=false;$('parkedList').innerHTML=S.parked.map(p=>'<li>'+esc(p)+'</li>').join('')}else pk.hidden=true;
+  document.body.classList.toggle('surge',Date.now()<S.surgeUntil);document.body.classList.toggle('hard',Date.now()<S.hardUntil);
+  $('hardBtn').classList.toggle('on',Date.now()<S.hardUntil);$('btnNah').disabled=Date.now()<S.hardUntil||!current;
+  $('sndBtn').textContent=S.sound?'🔊 sound':'🔇 muted';
+}
+function renderClocks(){
+  const n=new Date();$('clock').textContent=n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const exp=$('sExp');if(S.combo&&S.lastDoneAt){const left=25*60000-(Date.now()-S.lastDoneAt);if(left<=0){S.combo=0;save();renderBoard();exp.textContent='—'}else{exp.textContent=Math.floor(left/60000)+':'+String(Math.floor(left%60000/1000)).padStart(2,'0');exp.style.color=left<5*60000?'var(--pink)':''}}else exp.textContent='—';
+  const sg=$('surge');if(Date.now()<S.surgeUntil){sg.hidden=false;const l=S.surgeUntil-Date.now();$('surgeT').textContent=Math.floor(l/60000)+':'+String(Math.floor(l%60000/1000)).padStart(2,'0')}else if(!sg.hidden){sg.hidden=true;renderBoard();renderStack()}
+  if(Date.now()<S.hardUntil){$('hardBtn').textContent='🔒 hard '+Math.ceil((S.hardUntil-Date.now())/60000)+'m'}else if($('hardBtn').classList.contains('on')){$('hardBtn').textContent='🔒 hard mode';renderBoard();toast('Hard mode over. Not Today is back.')}
+  if(S.goal&&!S.nextSurgeAt)S.nextSurgeAt=Date.now()+(12+Math.random()*14)*60000;
+  if(S.goal&&S.nextSurgeAt&&Date.now()>S.nextSurgeAt&&Date.now()>S.surgeUntil&&!$('focus').classList.contains('on')){S.surgeUntil=Date.now()+5*60000;S.nextSurgeAt=Date.now()+(20+Math.random()*20)*60000;save();snd.surge();buzz([60,40,60]);toast('⚡ SURGE. Double XP for 5 minutes. Go.');renderBoard();renderStack()}
+}
+function renderRound(){
+  const n=new Date();const h=n.getHours()+n.getMinutes()/60;let tag,txt;const R=CFG.rounds;
+  if(h<12){tag='ROUND 1';txt=R.morning}
+  else if(h<15){tag='ROUND 2';txt=R.midday}
+  else if(h<18){tag='ROUND 3';txt=R.afternoon}
+  else{tag='FINAL ROUND';txt=R.night}
+  $('rTag').textContent=tag;$('rTxt').textContent=txt;
+}
+function coach(){
+  const n=cleared(),q=queue(),c=cards();const top=q[0]?c[q[0]]:null;let m;
+  if(!q.length)m='Deck\'s clear. Cash out, read the list, feel it.';
+  else if(n===0)m='Just one. Don\'t evaluate it. Swipe the small one and start the clock.';
+  else if(S.combo>=4&&top&&top.size!=='BOSS')m='Combo\'s hot. This is the moment for a boss. Jump to it or pick for me.';
+  else if(top&&top.tag==='text')m='Texts first. Thirty seconds each, three in a row lights the combo.';
+  else if(top&&top.tag==='email'&&S.combo>=2)m='Email run. Same tab, same energy, don\'t reread anything twice.';
+  else if(S.combo>=2)m='Momentum is real. Don\'t think, swipe.';
+  else if(S.skipRun>=2)m='Two passes. Choosing is the task right now. Hit 🎲 and let it choose.';
+  else if((S.skips[top&&top.id]||0)>=2)m='You\'ve passed this one twice. Shrink it. The awful part has a name.';
+  else if(n>=(S.goal||CFG.goals[1]||1))m='Goal hit. Everything now is bonus. Stop whenever you like, you already won.';
+  else{const opts=['The card is smaller than the dread.','Open the thing. Opening counts. +3 says so.',S.bundle?'Remember the '+S.bundle+'. Have it now, not after.':'One card, one timer, then recess.','One card, one timer, then recess.','Future-you at 6pm is watching. Be nice to them.'];m=opts[n%opts.length]}
+  $('coachTxt').textContent=m;
+}
+function renderStrip(){const c=cards();const all=[...S.done.map(d=>({id:d.id,st:d.mode==='chip'?'chip':'done'})),...queue().map(id=>({id,st:''})),...S.shelved.map(id=>({id,st:'skip'}))];$('strip').innerHTML=all.map(x=>`<span class="dot ${x.st} ${c[x.id]&&c[x.id].size==='BOSS'?'boss':''}" title="${esc(c[x.id]?c[x.id].title:'')}"></span>`).join('')}
+function themeOf(id){let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return 't'+(h%5+1)}
+function cardHtml(c,cls){
+  const skips=S.skips[c.id]||0;const href=safeHref(c.link);
+  return `<div class="card ${cls} ${themeOf(c.id)}" data-id="${esc(c.id)}">
+    <span class="stamp go">GO</span><span class="stamp nah">NAH</span>
+    <div class="meta"><span class="chip ${c.size}">${c.size==='BOSS'?'☠ boss':c.size+' · '+({S:'5m',M:'15m',L:'30m'}[c.size])}</span>${c.due?`<span class="chip due">${esc(c.due)}</span>`:''}${c.live?'<span class="chip live">added live</span>':''}${c.tag?`<span class="chip">${esc(c.tag)}</span>`:''}${c.added?'<span class="chip opened">Claude add</span>':''}${S.opened[c.id]?'<span class="chip opened">opened</span>':''}${skips>1?`<span class="chip">passed ×${skips}</span>`:''}</div>
+    <h2>${esc(c.title)}</h2>
+    ${c.first?`<div class="first"><b>${c.size==='S'?'2-min rule · just do it':'First move'}</b>${esc(c.first)}</div>`:''}
+    <div class="foot"><span>${href?`<a class="open" href="${esc(href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ open</a>`:(c.why?esc(c.why):(c.size==='BOSS'?'shrink it if it\'s scary':'smaller than it looks'))}</span><span class="xp">+${Math.round(XP[c.size]*mult())} XP</span></div>
+  </div>`;
+}
+function renderStack(){
+  const q=queue(),c=cards(),st=$('stack');
+  if(!q.length){st.innerHTML=`<div class="empty"><h3>DECK CLEARED</h3><p>${cleared()} down. ${S.shelved.length?S.shelved.length+' shelved for another day. ':''}Dump more or cash out.</p></div>`;current=null;$('btnShrink').hidden=true;$('btnGo').disabled=true;$('btnNah').disabled=true;renderStrip();coach();return}
+  $('btnGo').disabled=false;$('btnNah').disabled=Date.now()<S.hardUntil;
+  current=c[q[0]];
+  st.innerHTML=[q[2]&&cardHtml(c[q[2]],'b2'),q[1]&&cardHtml(c[q[1]],'b1'),cardHtml(current,'top')].filter(Boolean).join('');
+  $('btnShrink').hidden=!(current.size==='BOSS'||current.size==='L');
+  bindSwipe(st.querySelector('.card.top'));renderStrip();coach();
+}
+function renderAll(){renderBoard();renderRound();renderStack();renderClocks()}
+
+// ───────────────────────── SWIPE ─────────────────────────
+let swipeEl=null;
+function swipeStart(el,x,target){if(target&&target.closest&&target.closest('a,button,input,textarea'))return false;swipeEl=el;dragging=true;startX=x;dx=0;el.style.transition='none';return true}
+function swipeMove(x){const el=swipeEl;if(!dragging||!el)return;dx=x-startX;if(dx<0&&Date.now()<S.hardUntil)dx=dx*.15;el.style.transform=`translateX(${dx}px) rotate(${dx*.05}deg)`;const g=el.querySelector('.stamp.go'),n=el.querySelector('.stamp.nah');if(g)g.style.opacity=dx>30?Math.min((dx-30)/60,1):0;if(n)n.style.opacity=dx<-30?Math.min((-dx-30)/60,1):0}
+function swipeEnd(){const el=swipeEl;if(!dragging||!el)return;dragging=false;swipeEl=null;const th=Math.min(90,el.offsetWidth*.22);if(Math.abs(dx)>th){const d=dx;flyOut(el,d>0?'r':'l',()=>d>0?goCard():nahCard())}else{el.style.transition='transform .35s cubic-bezier(.2,1.2,.4,1)';el.style.transform='';el.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0)}}
+function bindSwipe(el){
+  if(!el)return;
+  if('PointerEvent' in window){
+    el.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;if(swipeStart(el,e.clientX,e.target)){try{el.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()}});
+  }else{
+    el.addEventListener('mousedown',e=>{if(e.button!==0)return;if(swipeStart(el,e.clientX,e.target))e.preventDefault()});
+  }
+  el.addEventListener('touchstart',e=>{if(dragging)return;const t=e.touches[0];if(swipeStart(el,t.clientX,e.target))e.preventDefault()},{passive:false});
+}
+window.addEventListener('pointermove',e=>swipeMove(e.clientX),{passive:true});
+window.addEventListener('pointerup',swipeEnd);window.addEventListener('pointercancel',swipeEnd);
+window.addEventListener('mousemove',e=>{if(!('PointerEvent' in window))swipeMove(e.clientX)},{passive:true});
+window.addEventListener('mouseup',()=>{if(!('PointerEvent' in window))swipeEnd()});
+window.addEventListener('touchmove',e=>{if(dragging&&swipeEl){swipeMove(e.touches[0].clientX);e.preventDefault()}},{passive:false});
+window.addEventListener('touchend',swipeEnd);window.addEventListener('touchcancel',swipeEnd);
+function flyOut(el,dir,cb){const x=dir==='r'?window.innerWidth:-window.innerWidth;el.style.transition='transform .3s cubic-bezier(.4,0,.2,1),opacity .3s';el.style.transform=`translateX(${x}px) rotate(${dir==='r'?18:-18}deg)`;el.style.opacity='0';setTimeout(cb,260)}
+const topEl=()=>document.querySelector('.card.top');
+
+// ───────────────────────── ACTIONS ─────────────────────────
+function nahCard(){
+  if(!current)return;if(Date.now()<S.hardUntil){toast('Hard mode. No passes. You chose this.');renderStack();return}
+  const id=current.id;snd.skip();S.skips[id]=(S.skips[id]||0)+1;S.skipRun++;
+  S.order=S.order.filter(x=>x!==id);S.order.push(id);
+  if(S.skipRun>=3){S.skipRun=0;dealer(true)}
+  save();renderStack();
+}
+function dealer(auto){const q=queue(),c=cards();if(!q.length)return;const pool=q.filter(id=>!(S.skips[id]>=3));const pick=(pool.length?pool:q).slice().sort((a,b)=>(XP[c[a].size]+(S.skips[a]||0)*5)-(XP[c[b].size]+(S.skips[b]||0)*5))[0];S.order=S.order.filter(x=>x!==pick);S.order.unshift(pick);save();renderStack();toast(auto?'Dealer\'s choice. Smallest card on top. Just this one.':'Dealt. Don\'t evaluate it. Go.');if(!auto)setTimeout(()=>$('btnGo').click(),500)}
+function goCard(){if(!current)return;S.skipRun=0;openFocus(current)}
+document.getElementById('stack').addEventListener('click',e=>{const top=e.target.closest('.card.top');if(!top||e.target.closest('a')||Math.abs(dx)>6)return;if(top._t){clearTimeout(top._t);top._t=null;goCard()}else{top._t=setTimeout(()=>{top._t=null},350)}});
+async function openFocus(c,awfulMove){
+  focusCard=c;$('fTitle').textContent=c.title;$('fFirst').textContent=awfulMove||c.first||'Open the thing. Look at it. That counts as starting.';$('fNote').value='';$('fPark').value='';
+  $('fEyebrow').textContent=(c.size==='BOSS'?'☠ BOSS FIGHT':'IN PLAY')+' · +'+Math.round(XP[c.size]*mult())+' XP · beat the clock for +'+Math.round(XP[c.size]*.3);
+  $('fIf').innerHTML=`IF stuck at 2 min → THEN do the 30-second version and tap chip.<br>IF you finish early → THEN don't start the next one here, come back and swipe.${S.bundle?'<br>Treat: '+esc(S.bundle)+'. Have it now.':''}`;
+  $('fChip').hidden=!(c.size==='BOSS'||c.size==='L'||!!awfulMove);
+  const ob=$('fOpened');ob.classList.toggle('done',!!S.opened[c.id]);ob.textContent=S.opened[c.id]?'opened ✓':'I opened it (+3)';
+  const lk=$('fLink');const href=safeHref(c.link);if(href){lk.hidden=false;lk.href=href}else lk.hidden=true;
+  timerMin=c.size==='S'?5:c.size==='M'?10:25;
+  document.querySelectorAll('.tpick button').forEach(b=>b.classList.toggle('on',+b.dataset.m===timerMin));
+  $('bdTxt').textContent=['Body double online. Working alongside.','Still here. Timer\'s mine to watch, task is yours.','Here. Nobody\'s judging the draft.','Present. You\'re not doing this alone.'][Math.floor(Math.random()*4)];
+  $('focus').classList.add('on');startTimer(timerMin);
+  try{if(navigator.wakeLock&&!wakeLock)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}
+}
+function closeFocus(){$('focus').classList.remove('on');clearInterval(timerIv);focusCard=null;document.title=CFG.title;try{if(wakeLock){wakeLock.release();wakeLock=null}}catch(e){}}
+function startTimer(m){clearInterval(timerIv);timerStart=Date.now();timerEnd=timerStart+m*60000;$('fTimer').classList.remove('over');$('fPie').classList.remove('over');tickTimer();timerIv=setInterval(tickTimer,1000)}
+function tickTimer(){const d=Math.floor((timerEnd-Date.now())/1000);const t=$('fTimer'),p=$('fPie');
+  if(d<=0){t.textContent='SHIP IT?';document.title='⏰ SHIP IT? · '+CFG.title;if(!t.classList.contains('over')){t.classList.add('over');p.classList.add('over');p.style.background='conic-gradient(var(--pink) 0deg,rgba(255,233,74,.12) 0deg)';snd.ding();buzz([120,60,120]);$('fEyebrow').textContent='TIME. Ship it, chip it, or shelve. All three are wins.'}return}
+  const txt=String(Math.floor(d/60)).padStart(2,'0')+':'+String(d%60).padStart(2,'0');t.textContent=txt;document.title='⏱ '+txt+' · '+focusCard.title.slice(0,24);
+  const frac=(timerEnd-Date.now())/(timerEnd-timerStart);p.style.background=`conic-gradient(var(--pink) ${frac*360}deg,rgba(255,233,74,.12) ${frac*360}deg)`;
+  if(d<=5)snd.tick()}
+function completeCard(mode){
+  const c=focusCard;if(!c)return;const note=$('fNote').value.trim();
+  const base=XP[c.size];const m=mult();const beat=Date.now()<timerEnd&&mode!=='chip';
+  let gained=mode==='chip'?Math.round(base*.35):Math.round(base*m);
+  let bonus=0;if(beat)bonus=Math.round(base*.3);gained+=bonus;
+  let tix=Math.floor(Math.random()*40)+5;let jack=false;
+  if(mode!=='chip'&&Math.random()<0.08){jack=true;tix+=200}
+  if(c.size==='BOSS'&&mode!=='chip')tix+=50;
+  const goal=S.goal||CFG.goals[1]||1;
+  const before=level(S.xp),goalBefore=cleared()>=goal;
+  const entry={id:c.id,title:c.title,size:c.size,xp:gained,mode:mode==='chip'?'chip':'done',note,at:new Date().toISOString(),beat};
+  if(mode==='chip'){S.done.push(entry)}else{S.combo++;S.lastDoneAt=Date.now();S.sinceRecess++;S.done.push(entry)}
+  S.xp+=gained;S.tix+=tix;lastCleared=c;
+  const after=level(S.xp);const goalNow=!goalBefore&&cleared()>=goal;
+  closeFocus();save();buzz(c.size==='BOSS'?[80,40,80,40,200]:[60]);
+  showReward(gained,tix,jack,after>before?LEVELS[after][1]:null,mode,c,beat?bonus:0,goalNow);
+  renderAll();
+}
+function shelveCard(){const c=focusCard;if(!c)return;S.shelved.push(c.id);closeFocus();save();toast('Shelved. It\'ll be there. Not today is a real answer.');renderAll()}
+function showReward(xp,tix,jack,lvl,mode,c,bonus,goalNow){
+  const r=$('reward');$('rXp').textContent='+'+xp;
+  const subs=mode==='chip'?['CHIPPED','FIRST MOVE MADE','THAT COUNTS']:goalNow?['GOAL. HIT.','YOU SAID '+S.goal+'. YOU DID '+S.goal+'.']:c.size==='BOSS'?['BOSS DOWN','YOU ABSOLUTE MENACE','SLAIN']:S.combo>=4?['ON FIRE','UNSTOPPABLE','COMBO ×'+mult()]:['CLEARED','GONE','SENT IT','LOOP CLOSED','BYE'];
+  $('rSub').textContent=subs[Math.floor(Math.random()*subs.length)];
+  const t=$('rTix');t.className='tix'+(jack?' jack':'');t.textContent=jack?'🎰 JACKPOT +'+tix+' tickets':'🎟 +'+tix+' tickets';
+  $('rBonus').textContent=bonus?'⏱ beat the clock +'+bonus+(mult()>1?' · ×'+mult()+' applied':''):(mult()>1?'×'+mult()+' applied':'');
+  $('rLvl').hidden=!lvl;if(lvl)$('rLvl').textContent='LEVEL UP · '+lvl;
+  $('rChain').disabled=!queue().length;
+  r.classList.add('on');
+  if(jack)snd.jack();else if(mode==='chip')snd.chip();else snd.win(S.combo);
+  if(lvl)setTimeout(snd.lvl,600);
+  confetti(c.size==='BOSS'||jack||goalNow?280:120,c.size==='BOSS'||goalNow);
+  if(c.size==='BOSS'||jack||goalNow){document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),450)}
+  clearTimeout(r._t);r._t=setTimeout(()=>{if(r.classList.contains('on')){r.classList.remove('on');afterReward()}},6000);
+}
+function afterReward(){if(S.sinceRecess>=3){S.sinceRecess=0;save();openRecess()}}
+function openRecess(){$('recessMenu').innerHTML=shuf(RECESS).slice(0,4).map(x=>`<button>${esc(x)}</button>`).join('');$('recess').classList.add('on');let end=Date.now()+3*60000;clearInterval(recessIv);const f=()=>{const d=Math.max(0,Math.floor((end-Date.now())/1000));$('recessTimer').textContent=Math.floor(d/60)+':'+String(d%60).padStart(2,'0');if(d<=0){clearInterval(recessIv);snd.ding();buzz([100,50,100])}};f();recessIv=setInterval(f,1000);$('recessMenu').querySelectorAll('button').forEach(b=>b.onclick=()=>{b.style.background='var(--mint)';toast('Go. Timer\'s running. Come back when it dings.')})}
+function shrink(){if(!current)return;$('awful').classList.add('on')}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2800)}
+
+// ───────────────────────── CONFETTI ─────────────────────────
+const cv=$('confetti'),cx=cv.getContext('2d');let parts=[],raf=null;
+function sizeCv(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}addEventListener('resize',sizeCv);sizeCv();
+function confetti(n,boss){const cols=['#FF2D87','#2B4CFF','#2EE6A6','#FF7A1A','#141414','#FFFFFF'];for(let i=0;i<n;i++)parts.push({x:innerWidth/2+(Math.random()-.5)*80,y:innerHeight*.45,vx:(Math.random()-.5)*(boss?22:14),vy:-Math.random()*(boss?20:14)-4,g:.45,r:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,w:6+Math.random()*8,h:4+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],life:90+Math.random()*50});if(!raf)raf=requestAnimationFrame(step)}
+function step(){cx.clearRect(0,0,innerWidth,innerHeight);parts=parts.filter(p=>p.life>0&&p.y<innerHeight+40);for(const p of parts){p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.vx*=.98;p.r+=p.vr;p.life--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.globalAlpha=Math.min(1,p.life/30);cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()}raf=parts.length?requestAnimationFrame(step):null;if(!raf)cx.clearRect(0,0,innerWidth,innerHeight)}
+
+// ───────────────────────── ADD / CASH / HACKS ─────────────────────────
+let addSize='S';
+function addCards(){
+  const lines=$('addText').value.split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length)return;
+  const ids=[];lines.forEach((l,i)=>{const boss=l.startsWith('!');const title=boss?l.slice(1).trim():l;const id='u'+Date.now()+'_'+i;S.custom.unshift({id,title,size:boss?'BOSS':addSize,live:true,first:boss?'Name the smallest visible piece. Do only that.':''});ids.push(id)});
+  S.order=[...ids,...S.order];$('addText').value='';$('add').classList.remove('on');save();toast(lines.length+' card'+(lines.length>1?'s':'')+' on top of the deck.');renderAll();
+}
+function openCash(){
+  const goal=S.goal||CFG.goals[1]||1;
+  $('cXp').textContent=S.xp;$('cDone').textContent=cleared();$('cTix').textContent=S.tix;
+  const boss=S.done.filter(d=>d.size==='BOSS'&&d.mode==='done').length,chips=S.done.filter(d=>d.mode==='chip').length,li=level(S.xp);
+  const hardest=S.done.filter(d=>d.mode==='done').sort((a,b)=>XP[b.size]-XP[a.size])[0];
+  $('cLine').textContent=!S.done.length?'Nothing yet. That\'s fine. Go swipe one small one and come back.':`Level ${li+1}, ${LEVELS[li][1]}. ${cleared()} cleared of a goal of ${goal}${boss?', '+boss+' boss'+(boss>1?'es':'')+' down':''}${chips?', '+chips+' first-moves made':''}${S.shelved.length?', '+S.shelved.length+' shelved on purpose':''}.${hardest?' Hardest thing you did: "'+hardest.title.split('(')[0].trim()+'."':''} Read the list slowly.`;
+  $('cList').innerHTML=S.done.slice().reverse().map(d=>`<div class="r"><span>${d.mode==='chip'?'◐ ':'✓ '}${esc(d.title)}${d.note?` <span class="note">— ${esc(d.note)}</span>`:''}</span><span class="x">+${d.xp}</span></div>`).join('');
+  $('cSave').textContent=(dbDoc?'Saved to this page\'s store. Claude can read it back.':'Saved in this browser only. Copy the recap and paste it to Claude.')+(S.stake?' Stake: '+S.stake:'');
+  $('cash').classList.add('on');
+}
+function recapText(){const goal=S.goal||CFG.goals[1]||1;return `${CFG.title} · ${CFG.dateLine}\nXP ${S.xp} · ${cleared()}/${goal} cleared · ${S.tix} tickets\n\n`+S.done.map(d=>(d.mode==='chip'?'◐ ':'✓ ')+d.title+(d.note?' — '+d.note:'')).join('\n')+(S.shelved.length?'\n\nShelved: '+S.shelved.map(id=>(cards()[id]||{}).title).filter(Boolean).join(' · '):'')+(S.parked.length?'\n\nParked thoughts: '+S.parked.join(' · '):'')}
+function bragText(){const c=lastCleared;return c?`Just cleared "${c.title.split('(')[0].trim()}" that I'd been putting off. ${cleared()} down today. 🎟`:recapText()}
+
+// ───────────────────────── WIRING ─────────────────────────
+$('btnGo').onclick=()=>{const el=topEl();el?flyOut(el,'r',goCard):goCard()};
+$('btnNah').onclick=()=>{const el=topEl();el?flyOut(el,'l',nahCard):nahCard()};
+$('btnShrink').onclick=shrink;
+$('diceBtn').onclick=()=>dealer(false);
+$('hardBtn').onclick=()=>{if(Date.now()<S.hardUntil){toast('Already locked. '+Math.ceil((S.hardUntil-Date.now())/60000)+' min left.');return}S.hardUntil=Date.now()+15*60000;save();renderBoard();renderStack();buzz([40,30,40]);toast('🔒 Hard mode: no passes for 15 min, 1.5× XP. You bound future-you.')};
+$('noiseBtn').onclick=toggleNoise;
+$('sndBtn').onclick=()=>{S.sound=!S.sound;save();renderBoard();if(S.sound)snd.chip()};
+$('hacksBtn').onclick=()=>{$('hacksList').innerHTML=HACKS.map(h=>`<div class="h"><b>${esc(h[0])}</b>${esc(h[1])}</div>`).join('');$('hacksSheet').classList.add('on')};$('hacksClose').onclick=()=>$('hacksSheet').classList.remove('on');
+$('fDone').onclick=()=>completeCard('done');$('fChip').onclick=()=>completeCard('chip');$('fShelve').onclick=shelveCard;
+$('fOpened').onclick=()=>{const c=focusCard;if(!c||S.opened[c.id])return;S.opened[c.id]=1;S.xp+=3;save();$('fOpened').classList.add('done');$('fOpened').textContent='opened ✓';snd.chip();buzz(30);toast('+3. Starting is the hard part and you did it.');renderBoard()};
+$('fParkBtn').onclick=()=>{const v=$('fPark').value.trim();if(!v)return;S.parked.push(v);$('fPark').value='';save();snd.chip();toast('Parked. It\'s safe. Back to the card.')};
+$('fPark').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('fParkBtn').click()}});
+document.querySelectorAll('.tpick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tpick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');startTimer(+b.dataset.m)});
+document.querySelectorAll('#awful .menu button').forEach(b=>b.onclick=()=>{const a=AWFUL[b.dataset.a];$('awful').classList.remove('on');toast('Wall: '+a.label+'. Door: on the card. Chip is enough.');openFocus(current,a.move)});
+$('awfulClose').onclick=()=>$('awful').classList.remove('on');
+$('recessDone').onclick=()=>{$('recess').classList.remove('on');clearInterval(recessIv);renderAll()};
+$('rChain').onclick=()=>{$('reward').classList.remove('on');clearTimeout($('reward')._t);renderStack();if(current){afterReward();if(!$('recess').classList.contains('on'))openFocus(current)}};
+$('rBack').onclick=()=>{$('reward').classList.remove('on');clearTimeout($('reward')._t);afterReward()};
+$('rBrag').onclick=async()=>{try{await navigator.clipboard.writeText(bragText());toast('Brag copied. Send it to someone.')}catch(e){toast('Copy blocked, but you still did it.')}};
+$('addBtn').onclick=()=>$('add').classList.add('on');$('addClose').onclick=()=>$('add').classList.remove('on');$('addGo').onclick=addCards;
+document.querySelectorAll('#add .pills button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#add .pills button').forEach(x=>x.classList.remove('on'));b.classList.add('on');addSize=b.dataset.s});
+$('cashBtn').onclick=openCash;$('cClose').onclick=()=>$('cash').classList.remove('on');
+$('cCopy').onclick=async()=>{try{await navigator.clipboard.writeText(recapText());toast('Recap copied. Paste it to Claude.')}catch(e){toast('Copy blocked. Select the list and copy by hand.')}};
+$('tonightBtn').onclick=()=>{if(!ANCHOR)return;S.order=S.order.filter(x=>x!==ANCHOR.id);S.order.unshift(ANCHOR.id);save();renderStack();toast('On top. Shrink it if you need to.')};
+
+// ───────────────────────── SETUP (from CFG) ─────────────────────────
+document.title=CFG.title;$('h1').textContent=CFG.title;$('dateLine').textContent=CFG.dateLine+(CFG.tagline?' · '+CFG.tagline:'');
+$('setupSummary').textContent='Three taps. You set the target, so it\'s yours. '+(CFG.setupSummary||'');
+const GOAL_LABELS=['gentle','solid','menace'];
+let pickGoal=CFG.goals[1]||CFG.goals[0]||1,pickBundle=(CFG.bundle[0]||{}).key||'';
+$('goalPick').innerHTML=CFG.goals.map((g,i)=>`<button data-g="${g}" class="${g===pickGoal?'on':''}">${g} · ${GOAL_LABELS[i]||'all'}</button>`).join('');
+$('bundlePick').innerHTML=CFG.bundle.map((b,i)=>`<button data-b="${esc(b.key)}" class="${i===0?'on':''}">${esc(b.label)}</button>`).join('');
+document.querySelectorAll('#goalPick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#goalPick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');pickGoal=+b.dataset.g});
+document.querySelectorAll('#bundlePick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#bundlePick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');pickBundle=b.dataset.b});
+$('setupGo').onclick=()=>{S.goal=pickGoal;S.bundle=pickBundle;S.stake=$('stake').value.trim();if(!S.seededHeadStart){S.xp+=15;S.seededHeadStart=true}S.nextSurgeAt=Date.now()+(8+Math.random()*10)*60000;save();$('setup').classList.remove('on');ac();snd.win(1);confetti(80,false);toast('Dealt. +15 XP for showing up. Swipe the small one.');renderAll()};
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;if($('focus').classList.contains('on')){if(e.key==='Enter')completeCard('done');if(e.key==='Escape')shelveCard();return}if($('reward').classList.contains('on')){if(e.key==='Enter')$('rChain').click();return}if(e.key==='ArrowRight')$('btnGo').click();if(e.key==='ArrowLeft')$('btnNah').click();if(e.key==='a')$('addBtn').click();if(e.key==='d')$('diceBtn').click()});
+document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'&&$('focus').classList.contains('on')){try{if(navigator.wakeLock&&!wakeLock)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}});
+setInterval(renderClocks,1000);setInterval(()=>{renderRound();coach()},30000);
+
+renderAll();
+if(!S.goal)$('setup').classList.add('on');
+(async()=>{try{if(!window.claude||!window.claude.use)return;db=await window.claude.use('db');if(!db)return;dbDoc=db.doc('days/'+CFG.day);const snap=await dbDoc.get().catch(()=>null);const remote=snap&&snap.exists&&snap.data?snap.data():null;if(remote&&(remote.xp||0)>S.xp){S.xp=remote.xp;S.tix=remote.tix||0;S.done=remote.done||[];S.shelved=remote.shelved||[];S.skips=remote.skips||{};S.custom=remote.custom||[];S.parked=remote.parked||[];S.goal=remote.goal||S.goal;S.stake=remote.stake||S.stake;save();renderAll()}else save()}catch(e){}})();
+</script>

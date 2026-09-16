@@ -26,17 +26,42 @@ If you'd rather skip the plugin system, download `ticket-run.skill` from the Rel
 3. Builds the page with `scripts/build.py` and hands it over in under ten lines: the link, the goal you get to pick, the sequence in groups, one line of coaching.
 4. When you come back with the recap, celebrates first. Skips and shelved cards are never counted.
 
-## Trying it without installing
+## Just want to see it? (no install, no code)
 
-`plugins/ticket-run/skills/ticket-run/assets/example-deck.json` is a sample dump. Build it and open the result:
+**Open this on your phone or laptop:** https://loganhc-09.github.io/ticket-run-skill/
+
+That's a demo deck with made-up tasks so you can feel the swipe, the timer, and the cash-out. Tap **+ dump my list** at the bottom to put your own things in. It won't size them or write first moves for you (that's the part Claude does), but you'll get the idea in about a minute.
+
+## Using it in Claude (the app or website), step by step
+
+You don't need Claude Code or a terminal for this. You need a paid Claude plan.
+
+1. Go to the [Releases page](https://github.com/loganhc-09/ticket-run-skill/releases/latest) and click **ticket-run.skill** to download it. It's a small zip file. Don't unzip it.
+2. Open claude.ai and click your name or initials in the bottom-left corner, then **Settings**.
+3. Click **Capabilities** in the left menu, scroll to **Skills**, and click **Upload skill** (the wording may be slightly different). Pick the file you just downloaded.
+4. Start a new chat and type: **brain dump**. Claude will explain what's about to happen and ask for everything on your mind. Set a timer, talk or type, hit send.
+5. Claude builds your deck and shows it in the chat. Tap the little **open in full screen** or **open in new tab** button on it so the cards have room. Before you close it, tap **cash out** and **copy recap** so nothing's lost.
+
+If step 3 doesn't show a Skills section, your plan or workspace doesn't have custom skills turned on yet. The demo link above still works.
+
+## For people with a terminal (Claude Code or Cursor)
+
+Claude Code, two commands:
+
+```
+/plugin marketplace add loganhc-09/ticket-run-skill
+/plugin install ticket-run@ticket-run
+```
+
+Cursor: download and unzip `ticket-run.skill`, then move the `ticket-run` folder into `~/.cursor/skills/`. Claude Code also picks it up from `~/.claude/skills/`.
+
+To rebuild the demo page yourself from the sample dump:
 
 ```
 python3 plugins/ticket-run/skills/ticket-run/scripts/build.py \
   plugins/ticket-run/skills/ticket-run/assets/example-deck.json --out demo.html
 open demo.html
 ```
-
-Works on a phone too; AirDrop the file or open it from Files.
 
 ## What I'd love feedback on
 
