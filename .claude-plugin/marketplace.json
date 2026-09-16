@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "ticket-run",
-  "description": "Ticket Run: turn a brain dump into a swipeable, game-like task deck for one day. Private test build.",
+  "description": "Ticket Run: turn a brain dump into a swipeable, game-like task deck for one day.",
   "owner": {
     "name": "Ticket Run"
   },

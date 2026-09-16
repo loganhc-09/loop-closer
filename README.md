@@ -6,7 +6,7 @@ You tell Claude everything on your mind, in whatever shape it comes out. Claude 
 
 Built for brains that run on interest, novelty, challenge, and urgency rather than importance. Every mechanic maps to a named finding; the app lists them under "hacks in play."
 
-**Private test build.** Please don't share the link yet.
+Early build. It works; the edges are still being sanded. Feedback welcome in Issues.
 
 ## Install (Claude Code)
 
@@ -17,7 +17,7 @@ Built for brains that run on interest, novelty, challenge, and urgency rather th
 
 Then in any session, dump your list. Trigger phrases that work: "brain dump", "task tinder", "ticket run", "I have a million things", "help me get through my list", "make today a game". Or just paste the list and say you can't start.
 
-If you'd rather skip the plugin system, download `ticket-run.skill` from the Releases tab, unzip it, and drop the `ticket-run` folder into `~/.claude/skills/`.
+If you'd rather skip the plugin system, download `ticket-run.skill` from the Releases tab, unzip it, and drop the `ticket-run` folder into `~/.claude/skills/`. The same folder works in Cursor (`~/.cursor/skills/`), and the `.skill` file can be uploaded to claude.ai under Settings, Capabilities, Skills.
 
 ## What Claude does with your dump
 

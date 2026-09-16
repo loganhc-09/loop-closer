@@ -14,8 +14,8 @@ vague first move shows up as a card the user swipes left on three times.
 
 Rules of thumb:
 
-- Size by minutes, not dread. "Text Stacey about the measuring tape" that's been on the list
-  for a month is an S. The month of avoidance is why it's on the deck, not why it's big.
+- Size by minutes, not dread. "Text Dana that I'm bringing the folding table" that's been on
+  the list for a month is an S. The month of avoidance is why it's on the deck, not why it's big.
 - "Decide X" is an M, and the first move says so: "Pick one of these three. Deciding is the task."
 - "Go through / review / edit" is an L. If the material is more than a few pages, BOSS.
 - A BOSS should be rare. One or two per deck. If everything is a boss, nothing is.
@@ -30,7 +30,7 @@ as if the user will read it at 4pm with no context and no willpower.
 
 Good first moves:
 
-- Text: the literal words. `"Bringing a measuring tape, fyi." Send.`
+- Text: the literal words. `"Bringing the folding table, fyi." Send.`
 - Reply: `Open the last thread. Answer the one question they asked. Send.`
 - Already-drafted thing: `It's already written and it's good. Open the draft, read it once, send.`
 - Scheduling: `Send two slots from tomorrow afternoon. Or drop a calendar invite directly.`
@@ -83,8 +83,8 @@ One card gets a banner and a "jump to it" button. It's for a real deadline today
 that has to go out tonight, the form due at midnight, the call at 3. If there's nothing like
 that, skip the anchor. A fake deadline trains them to ignore the banner.
 
-Anchor copy: `text` is the banner while it's open ("Ep26 recap: press send. The one rule.")
-and `doneText` replaces it after ("Recap SENT. Streak 2. That's the whole game."). Both under
+Anchor copy: `text` is the banner while it's open ("Invoice to Sam: press send. The one rule.")
+and `doneText` replaces it after ("Invoice SENT. That was the whole game."). Both under
 ~60 characters. Give the anchor card a `due: "tonight"` chip too.
 
 ## Goal pills
