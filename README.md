@@ -21,7 +21,7 @@ If you'd rather skip the plugin system, download `ticket-run.skill` from the Rel
 
 ## What Claude does with your dump
 
-1. Takes it as-is. No item-by-item interrogation.
+1. Takes it as-is. No item-by-item interrogation. If you show up empty-handed, it gives you a 5-minute guided dump instead: walk the rooms in your head (messages owed, dated things, the one you've been avoiding, life admin), and for anything big, say what it actually needs.
 2. Makes a card per task: size (S ≤5 min, M ~15, L ~30, BOSS 45+ or long-avoided), a first move written so you could do it half-asleep, a tag for texts and emails, a link if you mentioned one, and one anchor if something is due today.
 3. Builds the page with `scripts/build.py` and hands it over in under ten lines: the link, the goal you get to pick, the sequence in groups, one line of coaching.
 4. When you come back with the recap, celebrates first. Skips and shelved cards are never counted.

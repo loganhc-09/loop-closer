@@ -27,8 +27,33 @@ one more thing standing between them and the first swipe. If something is ambigu
 reasonable card and let them fix it in the app (there's a "dump my list" button that adds cards
 live).
 
-If they invoked the skill with nothing to dump, ask for it in one line and stop:
-"Dump everything. Messy is fine. One line per thing or just talk."
+If they invoked the skill with nothing to dump, or with two items and a trailing "etc", give
+them the guided dump below and stop. A first-timer doesn't know what "dump" means, how long
+to go, or what happens after, and a blank prompt is its own wall. Keep the shape and the
+timer; adjust the wording to the person. Then wait for the dump.
+
+> Here's what's about to happen: you dump, I deal. Everything in your head goes on a card
+> with a size and a two-minute first move. Smalls first, the scary one last. You get a link
+> and you swipe.
+>
+> Set a 5-minute timer. Don't sort, don't rank, don't finish sentences. Walk the rooms in
+> your head:
+> - Messages you owe. Texts, emails, the reply you keep opening and closing.
+> - Anything with a date on it.
+> - The one you've been avoiding for weeks.
+> - Money, house, body, kids, admin.
+> - Whatever's been nagging since you sat down.
+>
+> Bonus round if you have breath left: next to anything big, say what it actually needs.
+> "The report: I need last month's numbers and 20 minutes." That's what turns a wall into a
+> card.
+>
+> When the timer dings, send what you have. Messy is right. Talking is fine too.
+
+If they came with a real dump that's thin (under about five items), don't interrogate. Deal
+what's there and offer one line: "Want to walk the rooms for a second pass? Messages owed,
+dated things, the avoided one, life admin." The bonus-round detail is gold when you get it:
+"needs last month's numbers" becomes the first move verbatim.
 
 ### 2. Make the cards
 
