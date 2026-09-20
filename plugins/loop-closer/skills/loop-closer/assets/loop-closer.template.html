@@ -187,6 +187,9 @@ body.shake{animation:bodyshake .4s}
 .toast{position:fixed;left:50%;top:14px;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:100px;font-family:var(--mono);font-size:12px;z-index:40;transition:transform .3s cubic-bezier(.2,1.2,.4,1);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
 .toast.on{transform:translateX(-50%) translateY(0)}
 @media (max-width:480px){.stack{height:300px}.card h2{font-size:19px}}
+.cta{border:2px solid var(--ink);border-radius:10px;padding:10px 12px;background:var(--lilac);font-size:13px;display:flex;flex-direction:column;gap:8px}
+.cta a.btn{align-self:flex-start;background:var(--ink);color:var(--ground);text-decoration:none;border-radius:100px;padding:7px 14px;font-family:var(--mono);font-size:12px}
+#helpCredit a{color:var(--cobalt)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -307,6 +310,7 @@ body.shake{animation:bodyshake .4s}
 <div class="overlay" id="add"><div class="sheet">
   <h3>Dump your list</h3>
   <p>One per line. They go on top. Prefix with <code>!</code> for a boss.</p>
+  <p class="note">Got a deck from a chat? Paste the whole JSON block here instead and it replaces this deck. <a href="chat.html" id="chatHow">How to get one</a>.</p>
   <textarea id="addText" placeholder="Reply to that email&#10;!Finish the deck for Tuesday&#10;Book the dentist"></textarea>
   <div class="pills"><span class="note" style="align-self:center">Default size:</span><button data-s="S" class="on">S · 5m</button><button data-s="M">M · 15m</button><button data-s="L">L · 30m</button></div>
   <div class="row"><button class="primary" id="addGo">ADD TO DECK</button><button class="ghost" id="addClose">close</button></div>
@@ -322,6 +326,8 @@ body.shake{animation:bodyshake .4s}
   </div>
   <p class="note">The squares at the bottom are your deck: one per card, green when closed, grey when shelved. Round ones are bosses. Double-tap a card to go. Inside a card, "shrink it" gives you a smaller version.</p>
   <div class="pills"><button id="sndBtn">🔊 sound</button><button id="noiseBtn">🌊 brown noise</button><button id="hacksBtn">? hacks in play</button></div>
+  <p class="note" id="helpCredit"></p>
+  <div class="row" id="resetRow" hidden><button class="ghost" id="resetDeck">start over with the sample deck</button></div>
   <div class="row"><button class="ghost" id="helpClose">close</button></div>
 </div></div>
 
@@ -339,12 +345,30 @@ body.shake{animation:bodyshake .4s}
   <p id="cLine"></p>
   <div class="recap" id="cList"></div>
   <p class="note" id="cSave">Saved locally.</p>
+  <div class="cta" id="cCta"></div>
   <div class="row"><button class="primary" id="cCopy">COPY RECAP</button><button class="ghost" id="cClose">keep going</button></div>
 </div></div>
 
 <script>
 // ───────────────────────── CONFIG (injected by build.py) ─────────────────────────
-const CFG=__CONFIG__;
+const BASE_CFG=__CONFIG__;
+// A deck pasted from any chat (see CHAT.md) is stored by "dump my list" and dealt here instead of the built-in one.
+const CFG=(function(){let imp=null;try{imp=JSON.parse(localStorage.getItem('loop-closer-import')||'null')}catch(e){}if(!imp||!Array.isArray(imp.cards)||!imp.cards.length)return BASE_CFG;try{return dealImported(imp,BASE_CFG)}catch(e){return BASE_CFG}})();
+function dealImported(deck,base){
+  const SIZES={S:0,M:1,L:2,BOSS:3};const used=new Set();
+  const slug=t=>{const b=String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'card';let o=b,n=2;while(used.has(o)){o=b+'-'+n;n++}used.add(o);return o};
+  const cards=deck.cards.filter(c=>c&&c.title).map(c=>{const sz=String(c.size||'M').toUpperCase();const size=SIZES[sz]!==undefined?sz:'M';let id=c.id&&!used.has(String(c.id))?String(c.id):slug(c.title);used.add(id);return Object.assign({},c,{id,size,title:String(c.title).slice(0,120),first:c.first||'',tag:c.tag||''})});
+  const anchor=deck.anchor&&deck.anchor.id&&cards.some(c=>c.id===deck.anchor.id)?deck.anchor:null;
+  const rk=c=>{if(anchor&&c.id===anchor.id)return [9,9];const t=c.size==='S'?({text:0,email:1}[c.tag]!==undefined?{text:0,email:1}[c.tag]:2):2;return [SIZES[c.size],t]};
+  if(!deck.keepOrder){const sorted=cards.map((c,i)=>[c,i]).sort((a,b)=>{const ra=rk(a[0]),rb=rk(b[0]);return ra[0]-rb[0]||ra[1]-rb[1]||a[1]-b[1]}).map(p=>p[0]);cards.splice(0,cards.length,...sorted)}
+  const n=cards.length;const goals=[];[.22,.35,.55].forEach(f=>{const g=Math.max(1,Math.min(n,Math.ceil(n*f)));if(!goals.includes(g))goals.push(g)});while(goals.length<3&&goals[goals.length-1]<n)goals.push(goals[goals.length-1]+1);
+  const d=new Date();const day=deck.day||(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+  const dateLine=d.toLocaleDateString('en-US',{weekday:'short'})+' · '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const count=f=>cards.filter(f).length;const parts=[];const tx=count(c=>c.size==='S'&&c.tag==='text'),em=count(c=>c.size==='S'&&c.tag==='email'),sm=count(c=>c.size==='S')-tx-em;
+  [[tx,'text'],[em,'quick email'],[sm,'small'],[count(c=>c.size==='M'),'medium'],[count(c=>c.size==='L'),'large']].forEach(([k,w])=>{if(k)parts.push(k+' '+w+(k===1?'':'s'))});const bo=count(c=>c.size==='BOSS');if(bo)parts.push(bo+' boss'+(bo===1?'':'es'));
+  return Object.assign({},base,{title:deck.title||'Loop Closer',tagline:deck.tagline||'your deck, from the chat',day,dateLine,goals:goals.slice(0,3),anchor,bundle:deck.bundle||base.bundle,rounds:Object.assign({},base.rounds,deck.rounds||{}),setupSummary:'Your list is loaded: '+parts.join(', ')+'.',cards,imported:true});
+}
+const CTA=CFG.cta||{text:"Made by Logan Currie. If a deck of cards got you moving today, her Sunday email will too. Womansplaining AI: one AI episode in four minutes, and what to do about it.",label:"Subscribe, it's free",href:"https://www.womansplainingai.com/join/loop-closer"};
 const XP={S:10,M:25,L:50,BOSS:100};
 const SEED=CFG.cards;
 const DECK_VERSION=1;
@@ -599,7 +623,13 @@ function step(){cx.clearRect(0,0,innerWidth,innerHeight);parts=parts.filter(p=>p
 // ───────────────────────── ADD / CASH / HACKS ─────────────────────────
 let addSize='S';
 function addCards(){
-  const lines=$('addText').value.split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length)return;
+  const raw=$('addText').value.trim();
+  if(raw.startsWith('{')||raw.startsWith('```')){const j=raw.replace(/^```[a-z]*\s*/i,'').replace(/```\s*$/,'');let deck=null;try{deck=JSON.parse(j)}catch(e){toast('That JSON didn\'t parse. Copy the whole block from the chat, braces included.');return}
+    if(!deck||!Array.isArray(deck.cards)||!deck.cards.length){toast('No cards in that deck. It needs a "cards" list.');return}
+    try{localStorage.setItem('loop-closer-import',JSON.stringify(deck))}catch(e){toast('Browser storage is off here, so a pasted deck can\'t stick.');return}
+    const dd=new Date();const day=deck.day||(dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0'));try{localStorage.removeItem('loop-closer-'+day)}catch(e){}
+    location.reload();return}
+  const lines=raw.split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length)return;
   const ids=[];lines.forEach((l,i)=>{const boss=l.startsWith('!');const title=boss?l.slice(1).trim():l;const id='u'+Date.now()+'_'+i;S.custom.unshift({id,title,size:boss?'BOSS':addSize,live:true,first:boss?'Name the smallest visible piece. Do only that.':''});ids.push(id)});
   S.order=[...ids,...S.order];$('addText').value='';$('add').classList.remove('on');save();toast(lines.length+' card'+(lines.length>1?'s':'')+' on top of the deck.');renderAll();
 }
@@ -645,6 +675,9 @@ $('cCopy').onclick=async()=>{try{await navigator.clipboard.writeText(recapText()
 $('tonightBtn').onclick=()=>{if(!ANCHOR)return;S.order=S.order.filter(x=>x!==ANCHOR.id);S.order.unshift(ANCHOR.id);save();renderStack();toast('On top. Shrink it if you need to.')};
 
 // ───────────────────────── SETUP (from CFG) ─────────────────────────
+$('cCta').innerHTML='<span>'+esc(CTA.text)+'</span><a class="btn" href="'+esc(CTA.href)+'" target="_blank" rel="noopener">'+esc(CTA.label)+' →</a>';
+$('helpCredit').innerHTML='Loop Closer is by <a href="https://www.logancurrie.com" target="_blank" rel="noopener">Logan Currie</a>. Free, open source. Her Sunday newsletter is <a href="'+esc(CTA.href)+'" target="_blank" rel="noopener">Womansplaining AI</a>.';
+if(CFG.imported){$('resetRow').hidden=false;$('resetDeck').onclick=()=>{try{localStorage.removeItem('loop-closer-import');localStorage.removeItem(KEY)}catch(e){}location.reload()}}
 document.title=CFG.title;$('h1').textContent=CFG.title;$('dateLine').textContent=CFG.dateLine+(CFG.tagline?' · '+CFG.tagline:'');
 $('setupSummary').textContent='Two picks and you\'re dealt in. '+(CFG.setupSummary||'');
 const GOAL_LABELS=['gentle','solid','menace'];

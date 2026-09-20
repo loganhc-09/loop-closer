@@ -6,6 +6,8 @@ You know the loops: the reply you owe, the form that's been open in a tab for a 
 
 **Try it right now, no install:** https://loganhc-09.github.io/loop-closer/
 
+Made by [Logan Currie](https://www.logancurrie.com). Her Sunday newsletter is [Womansplaining AI](https://www.womansplainingai.com/join/loop-closer): one AI episode in four minutes, and what to do about it. Free.
+
 ## How this got made
 
 The whole brief was three messages to Claude. Verbatim:
@@ -24,7 +26,15 @@ The third message turned a one-day artifact into this skill. You say "brain dump
 
 ## Use it
 
-**In Claude (app or website).** You need a paid plan.
+**Only have a chat window?** That works. No skill, no paid plan: https://loganhc-09.github.io/loop-closer/chat.html
+
+1. Copy the prompt on that page. Paste it into Claude (free is fine) with your brain dump under it.
+2. Copy the JSON block it gives back.
+3. Open the [deck](https://loganhc-09.github.io/loop-closer/) → **+ dump my list** → paste → **ADD TO DECK**. Your cards replace the sample ones.
+
+The prompt is also in [CHAT.md](CHAT.md).
+
+**In Claude (app or website), as a skill.** You need a paid plan.
 
 1. Download **loop-closer.skill** from the [Releases page](https://github.com/loganhc-09/loop-closer/releases/latest). Don't unzip it.
 2. claude.ai → your name (bottom-left) → **Settings** → **Capabilities** → **Skills** → **Upload skill**. Pick the file.

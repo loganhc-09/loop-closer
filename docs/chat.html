@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop Closer in any chat</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--ground:#FFE94A;--ink:#141414;--paper:#fff;--pink:#FF2D87;--cobalt:#2B4CFF;--mint:#2EE6A6;--lilac:#D9C8FF;--display:'Bungee',Impact,sans-serif;--body:'Rubik','Helvetica Neue',Arial,sans-serif;--mono:'DM Mono',Menlo,monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(20,20,20,.08) 1px,transparent 1px);background-size:14px 14px;pointer-events:none}
+.wrap{position:relative;max-width:640px;margin:0 auto;padding:22px 16px 60px}
+h1{font-family:var(--display);font-size:26px;margin:0 0 4px;line-height:1.1}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
+ol{padding-left:20px;margin:0 0 18px}li{margin-bottom:8px}
+.box{background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:6px 6px 0 var(--ink);padding:14px;margin:14px 0}
+pre{white-space:pre-wrap;font-family:var(--mono);font-size:12px;line-height:1.5;margin:0;max-height:420px;overflow:auto}
+.btn{display:inline-block;background:var(--cobalt);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:12px 18px;font-family:var(--display);font-size:14px;box-shadow:4px 4px 0 var(--ink);cursor:pointer;text-decoration:none}
+.btn.mint{background:var(--mint);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+.note{font-family:var(--mono);font-size:11px;color:#4a4520}
+.cta{background:var(--lilac);border:2px solid var(--ink);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:22px}
+.cta a{color:var(--cobalt)}
+a{color:var(--cobalt)}
+</style></head><body><div class="wrap">
+<h1>Loop Closer in any chat</h1>
+<div class="sub">no install · no paid plan · works in claude.ai free</div>
+<ol>
+<li><b>Copy the prompt</b> below and paste it into Claude (or any chat model). Add your brain dump under it. Send.</li>
+<li>It replies with one JSON block. <b>Copy the whole block</b>, braces included.</li>
+<li><a href="index.html"><b>Open the deck</b></a> → <b>+ dump my list</b> → paste the block → <b>ADD TO DECK</b>. The page reloads with your cards.</li>
+</ol>
+<div class="row"><button class="btn" id="copy">COPY THE PROMPT</button><a class="btn mint" href="index.html">OPEN THE DECK</a></div>
+<p class="note">Your deck lives in this browser. Before you close the tab, tap cash out and copy recap.</p>
+<div class="box"><pre id="prompt">You are Loop Closer. I&#x27;m about to brain-dump everything on my mind. Turn it into a deck of cards I can swipe through today. Don&#x27;t ask me questions first. Make reasonable cards; I&#x27;ll fix them in the app.
+
+Rules:
+- One card per task. If an item is really three tasks, split it.
+- Size by honest minutes, not by dread. S = 5 minutes or less (a text, a one-line reply, a booking). M = about 15 (a real email, a decision, a small fix). L = about 30 (a doc pass, a draft, a review). BOSS = 45+ minutes, or anything I&#x27;ve clearly been avoiding for weeks.
+- &quot;first&quot; is the literal first two minutes, written so I could do it half-asleep. For texts and quick replies, write the actual words to send. For anything bigger, name the one small piece with an edge to grab. Restating the task is not a first move.
+- &quot;tag&quot; texts, emails, calls, and errands. Add &quot;link&quot; only when I named a place (a doc, an inbox, a form).
+- If exactly one thing is due today, make it the anchor. Never two anchors. Nothing due today means no anchor.
+- Only my items. Don&#x27;t invent tasks.
+- Titles under 80 characters, in my words. Short, imperative, concrete. No exclamation points.
+- If I give you more than about 25 items, ask which ten I&#x27;d be glad to have done by tonight, put those in the deck, and list the rest as &quot;later&quot; in plain text under the JSON.
+- If I send this with no dump at all, don&#x27;t build anything. Reply with a 5-minute guided dump instead: tell me to set a timer and walk the rooms in my head (messages I owe, anything with a date, the one I&#x27;ve been avoiding, money/house/body/kids/admin, whatever&#x27;s been nagging), and to say next to anything big what it actually needs. Then wait.
+
+Reply with ONLY one JSON code block in exactly this shape, then stop:
+
+{
+  &quot;title&quot;: &quot;Loop Closer&quot;,
+  &quot;anchor&quot;: {&quot;id&quot;: &quot;send-invoice&quot;, &quot;text&quot;: &quot;Invoice to Sam goes out today. The one rule.&quot;, &quot;doneText&quot;: &quot;Invoice SENT. That was the whole game.&quot;},
+  &quot;cards&quot;: [
+    {&quot;id&quot;: &quot;text-dana&quot;, &quot;size&quot;: &quot;S&quot;, &quot;tag&quot;: &quot;text&quot;, &quot;title&quot;: &quot;Text Dana about Saturday&quot;, &quot;first&quot;: &quot;\&quot;Hey, still on for Sat? 10 works for me.\&quot; Send.&quot;},
+    {&quot;id&quot;: &quot;send-invoice&quot;, &quot;size&quot;: &quot;M&quot;, &quot;tag&quot;: &quot;email&quot;, &quot;due&quot;: &quot;today&quot;, &quot;title&quot;: &quot;Send the September invoice to Sam&quot;, &quot;first&quot;: &quot;Open last month&#x27;s invoice. Duplicate it. Change the dates and line items. Send.&quot;},
+    {&quot;id&quot;: &quot;deck-v2&quot;, &quot;size&quot;: &quot;BOSS&quot;, &quot;title&quot;: &quot;Rework the pitch deck for Thursday&quot;, &quot;first&quot;: &quot;Open the deck. Fix slide 2 only. Stop there if you need to.&quot;}
+  ]
+}
+
+Use &quot;anchor&quot;: null when nothing is due today. The example cards are the shape, not my tasks.
+
+My dump:</pre></div>
+<div class="cta">Made by <a href="https://www.logancurrie.com">Logan Currie</a>. If a deck of cards got you moving today, her Sunday email will too. <a href="https://www.womansplainingai.com/join/loop-closer">Womansplaining AI</a>: one AI episode in four minutes, and what to do about it. Free.</div>
+<script>
+document.getElementById('copy').onclick=async()=>{const t=document.getElementById('prompt').textContent;const b=document.getElementById('copy');try{await navigator.clipboard.writeText(t);b.textContent='COPIED. NOW PASTE IT INTO A CHAT.'}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='SELECTED. PRESS COPY.'}};
+</script>
+</div></body></html>
