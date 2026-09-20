@@ -14,7 +14,7 @@ same list appears inside the app under "? hacks in play" so the user can see the
 | Endowed progress (Nunes & Drèze) | +15 XP for showing up, ring never starts empty | Never open with "you have 23 things to do." Open with the first swipe. |
 | Goal gradient (Hull, Kivetz) | "N to next" and the ring get louder near the end | In the cash-out, name how close they got, not how far they were. |
 | Variable-ratio reward (Skinner) | Tickets are random, 8% jackpot | Don't explain the tickets. Unpredictable is the point. |
-| Loss aversion (Kahneman & Tversky) | Combo has a visible 25-minute expiry; optional stake at setup | If they set a stake, don't mention it again until cash-out. |
+| Loss aversion (Kahneman & Tversky) | Combo has a visible 25-minute expiry; at setup they pick the one loop they most want gone tonight (🎯 badge, +20 on close) | No accountability partners, no "text a friend if you fail." The stake is private. If it's still open at cash-out, it's tomorrow's first card, never a failure. |
 | Body doubling | Focus mode shows a live "Claude's here" presence line | If you're in the session while they work, say so once. It counts. |
 | Visual timer (Time Timer) | The shrinking disk | Timer defaults come from size; don't override them in the deck. |
 | Parking lot (externalized working memory) | Park box in focus mode | Parked thoughts come back in the recap. Read them back at cash-out. |

@@ -96,7 +96,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(0,0,0,.06);padding:1
 .tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .tools button{background:#fff;border:2px solid var(--ink);border-radius:100px;padding:6px 11px;font-family:var(--mono);font-size:11px;box-shadow:2px 2px 0 var(--ink)}
 .tools button.on{background:var(--ink);color:var(--ground)}
+.stripcap{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
 .strip{display:flex;gap:6px;flex-wrap:wrap}
+.howto{display:flex;flex-direction:column;gap:8px;margin:4px 0 6px}
+.howto .hr{display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:center;font-size:13px;line-height:1.35}
+.howto .k{display:inline-block;text-align:center;border:3px solid var(--ink);border-radius:12px;padding:8px 6px;font-family:var(--display);font-size:12px;background:#fff;box-shadow:3px 3px 0 var(--ink);line-height:1}
+.howto .k.go{background:var(--cobalt);color:#fff} .howto .k.boss{background:var(--ink);color:var(--ground)}
 .strip .dot{width:14px;height:14px;border-radius:4px;border:2px solid var(--ink);background:#fff}
 .strip .dot.done{background:var(--mint)} .strip .dot.chip{background:linear-gradient(90deg,var(--mint) 50%,#fff 50%)} .strip .dot.skip{background:#ddd} .strip .dot.boss{border-radius:50%}
 .parked{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:8px 12px;font-size:12px}
@@ -216,15 +221,14 @@ body.shake{animation:bodyshake .4s}
     <button class="big shrink" id="btnShrink" hidden>SHRINK IT</button>
     <button class="big go" id="btnGo">LET'S GO →</button>
   </div>
-  <div class="hint">swipe right to start · left to pass · double-tap = go · ← → keys work too</div>
+  <div class="hint">right = start it now · left = later · arrow keys work</div>
   <div class="tools">
     <button id="diceBtn">🎲 pick for me</button>
     <button id="hardBtn">🔒 hard mode</button>
-    <button id="noiseBtn">🌊 brown noise</button>
-    <button id="sndBtn">🔊 sound</button>
-    <button id="hacksBtn">? hacks in play</button>
+    <button id="helpBtn">? help</button>
   </div>
   <div class="parked" id="parked" hidden><b>Parking lot</b><ul id="parkedList"></ul></div>
+  <div class="stripcap" id="stripCap">your deck</div>
   <div class="strip" id="strip"></div>
 </div>
 
@@ -238,11 +242,16 @@ body.shake{animation:bodyshake .4s}
 
 <!-- SETUP -->
 <div class="overlay" id="setup"><div class="sheet">
-  <h3>Before you swipe</h3>
-  <p id="setupSummary">Three taps. You set the target, so it's yours.</p>
+  <h3>How this works</h3>
+  <div class="howto">
+    <div class="hr"><span class="k go">LET'S GO →</span><span>Swipe right or tap it. A timer opens with the first two minutes already written out. Do that much.</span></div>
+    <div class="hr"><span class="k">NOT TODAY</span><span>Swipe left. The card goes to the bottom and comes back later. Passing is allowed.</span></div>
+    <div class="hr"><span class="k boss">☠ BOSS</span><span>The big one. It's dealt last, after the small wins have built you a combo.</span></div>
+  </div>
+  <p id="setupSummary" class="note">Two picks and you're dealt in.</p>
   <div><p class="note" style="margin-bottom:6px">HOW MANY TODAY?</p><div class="pills" id="goalPick"></div></div>
   <div><p class="note" style="margin-bottom:6px">YOUR TREAT WHILE WORKING (temptation bundling)</p><div class="pills" id="bundlePick"></div></div>
-  <div><p class="note" style="margin-bottom:6px">STAKE (optional, loss aversion works)</p><input type="text" id="stake" placeholder="e.g. If I'm under 5 by 6pm I tell a friend and buy dinner"></div>
+  <div><p class="note" style="margin-bottom:6px">THE ONE YOU MOST WANT OUT OF YOUR HEAD BY TONIGHT</p><div class="pills" id="stakePick"></div></div>
   <p class="note">You already have +15 XP for showing up and reading this. Head start's real.</p>
   <div class="row"><button class="primary" id="setupGo">DEAL ME IN</button></div>
 </div></div>
@@ -303,6 +312,19 @@ body.shake{animation:bodyshake .4s}
   <div class="row"><button class="primary" id="addGo">ADD TO DECK</button><button class="ghost" id="addClose">close</button></div>
 </div></div>
 
+<!-- HELP -->
+<div class="overlay" id="helpSheet"><div class="sheet">
+  <h3>How to play</h3>
+  <div class="howto">
+    <div class="hr"><span class="k go">LET'S GO →</span><span>Swipe right or tap it. A timer opens with the first two minutes already written out. Do that much.</span></div>
+    <div class="hr"><span class="k">NOT TODAY</span><span>Swipe left. The card goes to the bottom and comes back later. Passing is allowed.</span></div>
+    <div class="hr"><span class="k boss">☠ BOSS</span><span>The big one. It's dealt last, after the small wins have built you a combo.</span></div>
+  </div>
+  <p class="note">The squares at the bottom are your deck: one per card, green when closed, grey when shelved. Round ones are bosses. Double-tap a card to go. Inside a card, "shrink it" gives you a smaller version.</p>
+  <div class="pills"><button id="sndBtn">🔊 sound</button><button id="noiseBtn">🌊 brown noise</button><button id="hacksBtn">? hacks in play</button></div>
+  <div class="row"><button class="ghost" id="helpClose">close</button></div>
+</div></div>
+
 <!-- HACKS -->
 <div class="overlay" id="hacksSheet"><div class="sheet">
   <h3>Hacks in play</h3>
@@ -343,7 +365,7 @@ const HACKS=[
  ['Endowed progress (Nunes & Drèze)','You started at +15 XP and the ring is never empty. People finish what looks started.'],
  ['Goal gradient (Hull, Kivetz)','Effort rises near the end. "N to next" and the ring get louder as you close in.'],
  ['Variable-ratio reward (Skinner)','Tickets are random every time, 8% jackpot. Unpredictable rewards hold attention longer than fixed ones.'],
- ['Loss aversion (Kahneman & Tversky)','Combo has a visible expiry. Optional stake at setup. Losing a streak hurts more than gaining one feels good.'],
+ ['Loss aversion (Kahneman & Tversky)','Combo has a visible expiry, and you named the one loop you want gone tonight. Losing a streak hurts more than gaining one feels good; so does leaving that one open.'],
  ['Body doubling','Focus mode has a live presence line. It\'s a stand-in; a real one is a person in the same room.'],
  ['Visual timer (Time Timer)','The shrinking disk makes time visible. Time blindness is a core ADHD deficit, digits alone don\'t fix it.'],
  ['Parking lot (externalized working memory)','Intrusive thoughts go in the park box without leaving focus. Captured, not chased.'],
@@ -439,7 +461,7 @@ function renderRound(){
 function coach(){
   const n=cleared(),q=queue(),c=cards();const top=q[0]?c[q[0]]:null;let m;
   if(!q.length)m='Deck\'s clear. Cash out, read the list, feel it.';
-  else if(n===0)m='Just one. Don\'t evaluate it. Swipe the small one and start the clock.';
+  else if(n===0)m='Just one. Swipe right on the small one (or tap LET\'S GO). The timer does the rest.';
   else if(S.combo>=4&&top&&top.size!=='BOSS')m='Combo\'s hot. This is the moment for a boss. Jump to it or pick for me.';
   else if(top&&top.tag==='text')m='Texts first. Thirty seconds each, three in a row lights the combo.';
   else if(top&&top.tag==='email'&&S.combo>=2)m='Email run. Same tab, same energy, don\'t reread anything twice.';
@@ -450,13 +472,13 @@ function coach(){
   else{const opts=['The card is smaller than the dread.','Open the thing. Opening counts. +3 says so.',S.bundle?'Remember the '+S.bundle+'. Have it now, not after.':'One card, one timer, then recess.','One card, one timer, then recess.','Future-you at 6pm is watching. Be nice to them.'];m=opts[n%opts.length]}
   $('coachTxt').textContent=m;
 }
-function renderStrip(){const c=cards();const all=[...S.done.map(d=>({id:d.id,st:d.mode==='chip'?'chip':'done'})),...queue().map(id=>({id,st:''})),...S.shelved.map(id=>({id,st:'skip'}))];$('strip').innerHTML=all.map(x=>`<span class="dot ${x.st} ${c[x.id]&&c[x.id].size==='BOSS'?'boss':''}" title="${esc(c[x.id]?c[x.id].title:'')}"></span>`).join('')}
+function renderStrip(){const c=cards();const all=[...S.done.map(d=>({id:d.id,st:d.mode==='chip'?'chip':'done'})),...queue().map(id=>({id,st:''})),...S.shelved.map(id=>({id,st:'skip'}))];$('stripCap').textContent='your deck · '+cleared()+' of '+all.length+' closed';$('strip').innerHTML=all.map(x=>`<span class="dot ${x.st} ${c[x.id]&&c[x.id].size==='BOSS'?'boss':''}" title="${esc(c[x.id]?c[x.id].title:'')}"></span>`).join('')}
 function themeOf(id){let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return 't'+(h%5+1)}
 function cardHtml(c,cls){
   const skips=S.skips[c.id]||0;const href=safeHref(c.link);
   return `<div class="card ${cls} ${themeOf(c.id)}" data-id="${esc(c.id)}">
     <span class="stamp go">GO</span><span class="stamp nah">NAH</span>
-    <div class="meta"><span class="chip ${c.size}">${c.size==='BOSS'?'☠ boss':c.size+' · '+({S:'5m',M:'15m',L:'30m'}[c.size])}</span>${c.due?`<span class="chip due">${esc(c.due)}</span>`:''}${c.live?'<span class="chip live">added live</span>':''}${c.tag?`<span class="chip">${esc(c.tag)}</span>`:''}${c.added?'<span class="chip opened">Claude add</span>':''}${S.opened[c.id]?'<span class="chip opened">opened</span>':''}${skips>1?`<span class="chip">passed ×${skips}</span>`:''}</div>
+    <div class="meta"><span class="chip ${c.size}">${c.size==='BOSS'?'☠ boss':c.size+' · '+({S:'5m',M:'15m',L:'30m'}[c.size])}</span>${S.stake===c.id?'<span class="chip due">🎯 your pick</span>':''}${c.due?`<span class="chip due">${esc(c.due)}</span>`:''}${c.live?'<span class="chip live">added live</span>':''}${c.tag?`<span class="chip">${esc(c.tag)}</span>`:''}${c.added?'<span class="chip opened">Claude add</span>':''}${S.opened[c.id]?'<span class="chip opened">opened</span>':''}${skips>1?`<span class="chip">passed ×${skips}</span>`:''}</div>
     <h2>${esc(c.title)}</h2>
     ${c.first?`<div class="first"><b>${c.size==='S'?'2-min rule · just do it':'First move'}</b>${esc(c.first)}</div>`:''}
     <div class="foot"><span>${href?`<a class="open" href="${esc(href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ open</a>`:(c.why?esc(c.why):(c.size==='BOSS'?'shrink it if it\'s scary':'smaller than it looks'))}</span><span class="xp">+${Math.round(XP[c.size]*mult())} XP</span></div>
@@ -532,6 +554,7 @@ function completeCard(mode){
   const base=XP[c.size];const m=mult();const beat=Date.now()<timerEnd&&mode!=='chip';
   let gained=mode==='chip'?Math.round(base*.35):Math.round(base*m);
   let bonus=0;if(beat)bonus=Math.round(base*.3);gained+=bonus;
+  const wasPick=(S.stake===c.id&&mode!=='chip');if(wasPick)gained+=20;
   let tix=Math.floor(Math.random()*40)+5;let jack=false;
   if(mode!=='chip'&&Math.random()<0.08){jack=true;tix+=200}
   if(c.size==='BOSS'&&mode!=='chip')tix+=50;
@@ -543,6 +566,7 @@ function completeCard(mode){
   const after=level(S.xp);const goalNow=!goalBefore&&cleared()>=goal;
   closeFocus();save();buzz(c.size==='BOSS'?[80,40,80,40,200]:[60]);
   showReward(gained,tix,jack,after>before?LEVELS[after][1]:null,mode,c,beat?bonus:0,goalNow);
+  if(wasPick)setTimeout(()=>toast('🎯 That was the one you wanted gone. It\'s gone. +20.'),1200);
   renderAll();
 }
 function shelveCard(){const c=focusCard;if(!c)return;S.shelved.push(c.id);closeFocus();save();toast('Shelved. It\'ll be there. Not today is a real answer.');renderAll()}
@@ -586,7 +610,8 @@ function openCash(){
   const hardest=S.done.filter(d=>d.mode==='done').sort((a,b)=>XP[b.size]-XP[a.size])[0];
   $('cLine').textContent=!S.done.length?'Nothing yet. That\'s fine. Go swipe one small one and come back.':`Level ${li+1}, ${LEVELS[li][1]}. ${cleared()} cleared of a goal of ${goal}${boss?', '+boss+' boss'+(boss>1?'es':'')+' down':''}${chips?', '+chips+' first-moves made':''}${S.shelved.length?', '+S.shelved.length+' shelved on purpose':''}.${hardest?' Hardest thing you did: "'+hardest.title.split('(')[0].trim()+'."':''} Read the list slowly.`;
   $('cList').innerHTML=S.done.slice().reverse().map(d=>`<div class="r"><span>${d.mode==='chip'?'◐ ':'✓ '}${esc(d.title)}${d.note?` <span class="note">— ${esc(d.note)}</span>`:''}</span><span class="x">+${d.xp}</span></div>`).join('');
-  $('cSave').textContent=(dbDoc?'Saved to this page\'s store. Claude can read it back.':'Saved in this browser only. Copy the recap and paste it to Claude.')+(S.stake?' Stake: '+S.stake:'');
+  $('cSave').textContent=(dbDoc?'Saved to this page\'s store. Claude can read it back.':'Saved in this browser only. Copy the recap and paste it to Claude.')+'';
+  const pk=S.stake?cards()[S.stake]:null;if(pk){const got=S.done.some(d=>d.id===S.stake&&d.mode==='done');$('cLine').textContent+=got?' 🎯 The one you wanted gone is gone.':' 🎯 Still open: "'+pk.title.split('(')[0].trim()+'." That\'s tomorrow\'s first card, not a failure.'}
   $('cash').classList.add('on');
 }
 function recapText(){const goal=S.goal||CFG.goals[1]||1;return `${CFG.title} · ${CFG.dateLine}\nXP ${S.xp} · ${cleared()}/${goal} cleared · ${S.tix} tickets\n\n`+S.done.map(d=>(d.mode==='chip'?'◐ ':'✓ ')+d.title+(d.note?' — '+d.note:'')).join('\n')+(S.shelved.length?'\n\nShelved: '+S.shelved.map(id=>(cards()[id]||{}).title).filter(Boolean).join(' · '):'')+(S.parked.length?'\n\nParked thoughts: '+S.parked.join(' · '):'')}
@@ -600,7 +625,8 @@ $('diceBtn').onclick=()=>dealer(false);
 $('hardBtn').onclick=()=>{if(Date.now()<S.hardUntil){toast('Already locked. '+Math.ceil((S.hardUntil-Date.now())/60000)+' min left.');return}S.hardUntil=Date.now()+15*60000;save();renderBoard();renderStack();buzz([40,30,40]);toast('🔒 Hard mode: no passes for 15 min, 1.5× XP. You bound future-you.')};
 $('noiseBtn').onclick=toggleNoise;
 $('sndBtn').onclick=()=>{S.sound=!S.sound;save();renderBoard();if(S.sound)snd.chip()};
-$('hacksBtn').onclick=()=>{$('hacksList').innerHTML=HACKS.map(h=>`<div class="h"><b>${esc(h[0])}</b>${esc(h[1])}</div>`).join('');$('hacksSheet').classList.add('on')};$('hacksClose').onclick=()=>$('hacksSheet').classList.remove('on');
+$('helpBtn').onclick=()=>$('helpSheet').classList.add('on');$('helpClose').onclick=()=>$('helpSheet').classList.remove('on');
+$('hacksBtn').onclick=()=>{$('helpSheet').classList.remove('on');$('hacksList').innerHTML=HACKS.map(h=>`<div class="h"><b>${esc(h[0])}</b>${esc(h[1])}</div>`).join('');$('hacksSheet').classList.add('on')};$('hacksClose').onclick=()=>$('hacksSheet').classList.remove('on');
 $('fDone').onclick=()=>completeCard('done');$('fChip').onclick=()=>completeCard('chip');$('fShelve').onclick=shelveCard;
 $('fOpened').onclick=()=>{const c=focusCard;if(!c||S.opened[c.id])return;S.opened[c.id]=1;S.xp+=3;save();$('fOpened').classList.add('done');$('fOpened').textContent='opened ✓';snd.chip();buzz(30);toast('+3. Starting is the hard part and you did it.');renderBoard()};
 $('fParkBtn').onclick=()=>{const v=$('fPark').value.trim();if(!v)return;S.parked.push(v);$('fPark').value='';save();snd.chip();toast('Parked. It\'s safe. Back to the card.')};
@@ -620,14 +646,17 @@ $('tonightBtn').onclick=()=>{if(!ANCHOR)return;S.order=S.order.filter(x=>x!==ANC
 
 // ───────────────────────── SETUP (from CFG) ─────────────────────────
 document.title=CFG.title;$('h1').textContent=CFG.title;$('dateLine').textContent=CFG.dateLine+(CFG.tagline?' · '+CFG.tagline:'');
-$('setupSummary').textContent='Three taps. You set the target, so it\'s yours. '+(CFG.setupSummary||'');
+$('setupSummary').textContent='Two picks and you\'re dealt in. '+(CFG.setupSummary||'');
 const GOAL_LABELS=['gentle','solid','menace'];
-let pickGoal=CFG.goals[1]||CFG.goals[0]||1,pickBundle=(CFG.bundle[0]||{}).key||'';
+let pickGoal=CFG.goals[1]||CFG.goals[0]||1,pickBundle=(CFG.bundle[0]||{}).key||'',pickStake='';
+{const cs=cards();const rank={BOSS:0,L:1,M:2,S:3};const cands=Object.values(cs).filter(c=>!c.added).sort((a,b)=>(a.due?-1:0)-(b.due?-1:0)||rank[a.size]-rank[b.size]).slice(0,5);
+$('stakePick').innerHTML=cands.map(c=>`<button data-k="${esc(c.id)}">${esc(c.title.split('(')[0].trim().slice(0,34))}</button>`).join('')+'<button data-k="" class="on">no pick</button>';
+document.querySelectorAll('#stakePick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#stakePick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');pickStake=b.dataset.k})}
 $('goalPick').innerHTML=CFG.goals.map((g,i)=>`<button data-g="${g}" class="${g===pickGoal?'on':''}">${g} · ${GOAL_LABELS[i]||'all'}</button>`).join('');
 $('bundlePick').innerHTML=CFG.bundle.map((b,i)=>`<button data-b="${esc(b.key)}" class="${i===0?'on':''}">${esc(b.label)}</button>`).join('');
 document.querySelectorAll('#goalPick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#goalPick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');pickGoal=+b.dataset.g});
 document.querySelectorAll('#bundlePick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#bundlePick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');pickBundle=b.dataset.b});
-$('setupGo').onclick=()=>{S.goal=pickGoal;S.bundle=pickBundle;S.stake=$('stake').value.trim();if(!S.seededHeadStart){S.xp+=15;S.seededHeadStart=true}S.nextSurgeAt=Date.now()+(8+Math.random()*10)*60000;save();$('setup').classList.remove('on');ac();snd.win(1);confetti(80,false);toast('Dealt. +15 XP for showing up. Swipe the small one.');renderAll()};
+$('setupGo').onclick=()=>{S.goal=pickGoal;S.bundle=pickBundle;S.stake=pickStake;if(!S.seededHeadStart){S.xp+=15;S.seededHeadStart=true}S.nextSurgeAt=Date.now()+(8+Math.random()*10)*60000;save();$('setup').classList.remove('on');ac();snd.win(1);confetti(80,false);toast('Dealt. +15 XP for showing up. Swipe the small one.');renderAll()};
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;if($('focus').classList.contains('on')){if(e.key==='Enter')completeCard('done');if(e.key==='Escape')shelveCard();return}if($('reward').classList.contains('on')){if(e.key==='Enter')$('rChain').click();return}if(e.key==='ArrowRight')$('btnGo').click();if(e.key==='ArrowLeft')$('btnNah').click();if(e.key==='a')$('addBtn').click();if(e.key==='d')$('diceBtn').click()});
 document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'&&$('focus').classList.contains('on')){try{if(navigator.wakeLock&&!wakeLock)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}});
 setInterval(renderClocks,1000);setInterval(()=>{renderRound();coach()},30000);
