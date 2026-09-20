@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build a Ticket Run page from a deck JSON file.
+"""Build a Loop Closer page from a deck JSON file.
 
 Usage:
-    python3 build.py deck.json [--out ticket-run.html] [--keep-order] [--quiet]
+    python3 build.py deck.json [--out loop-closer.html] [--keep-order] [--quiet]
 
 Deck file (only `cards[].title` is required):
 {
-  "title": "Ticket Run",            # page title, default "Ticket Run"
+  "title": "Loop Closer",            # page title, default "Loop Closer"
   "tagline": "Task Tinder, jacked", # under the title
   "day": "2026-09-14",              # storage key + db doc id; default today
   "goals": [5, 8, 12],              # goal pills; default derived from deck size
@@ -47,7 +47,7 @@ DEFAULT_ROUNDS = {
     "afternoon": "Late afternoon. Boss window. Take the big one while the energy holds.",
     "night": "Evening. Whatever's due is the only card that matters. Then cash out.",
 }
-TEMPLATE = Path(__file__).resolve().parent.parent / "assets" / "ticket-run.template.html"
+TEMPLATE = Path(__file__).resolve().parent.parent / "assets" / "loop-closer.template.html"
 
 
 def slug(text: str, used: set) -> str:
@@ -160,7 +160,7 @@ def build(deck: Dict[str, Any], keep_order: bool, warn) -> Dict[str, Any]:
     goals = sorted({int(g) for g in goals if 0 < int(g) <= len(cards)}) or [len(cards)]
 
     return {
-        "title": str(deck.get("title") or "Ticket Run"),
+        "title": str(deck.get("title") or "Loop Closer"),
         "tagline": str(deck.get("tagline") or "Task Tinder, jacked"),
         "day": day,
         "dateLine": d.strftime("%a · %b %-d %Y"),

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "loop-closer",
+  "description": "Turn a messy brain dump into a swipeable, dopamine-driven task deck for one day. Say 'brain dump', 'close my loops', or 'I have a million things' and get a sequenced deck with a 2-minute first move on every card.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Loop Closer"
+  },
+  "keywords": [
+    "adhd",
+    "procrastination",
+    "open-loops",
+    "task-tinder",
+    "brain-dump",
+    "productivity",
+    "gamification",
+    "focus-timer"
+  ]
+}

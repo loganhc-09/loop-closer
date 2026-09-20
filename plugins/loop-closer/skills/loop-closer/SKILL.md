@@ -1,9 +1,9 @@
 ---
-name: ticket-run
-description: "Turn a messy brain dump into a swipeable, game-like task deck for one day (Task Tinder, dopamine mode). The user dumps everything on their mind; you size each item, write a 2-minute first move for it, sequence the deck so quick wins build a combo before the big scary thing, and ship a one-page app with XP, timers, random tickets, and a cash-out recap. Use this whenever someone lists a pile of things they need to do and sounds stuck, scattered, overwhelmed, or avoidant. Triggers: 'brain dump', 'task tinder', 'ticket run', 'dopamine mode', 'make today a game', 'I have a million things', 'help me get through my list', 'ADHD mode', 'I can't start', 'gamify my day'. Trigger even if they never ask for an app, and even if the dump is a voice-memo transcript or a half-sentence list."
+name: loop-closer
+description: "Turn a messy brain dump into a swipeable, game-like task deck for one day (Task Tinder, dopamine mode). The user dumps everything on their mind; you size each item, write a 2-minute first move for it, sequence the deck so quick wins build a combo before the big scary thing, and ship a one-page app with XP, timers, random tickets, and a cash-out recap. Use this whenever someone lists a pile of things they need to do and sounds stuck, scattered, overwhelmed, or avoidant. Triggers: 'brain dump', 'close my loops', 'loop closer', 'open loops', 'task tinder', 'dopamine mode', 'make today a game', 'I have a million things', 'help me get through my list', 'ADHD mode', 'I can't start', 'gamify my day'. Trigger even if they never ask for an app, and even if the dump is a voice-memo transcript or a half-sentence list."
 ---
 
-# Ticket Run
+# Loop Closer
 
 One day. One deck. The user brain-dumps, you deal the cards, they swipe. The app does the
 dopamine: XP by size, a combo multiplier, random tickets with a jackpot, a focus timer, a "shrink
@@ -82,7 +82,7 @@ Save a JSON file (in your scratchpad or working dir) shaped like this:
 
 ```json
 {
-  "title": "Ticket Run",
+  "title": "Loop Closer",
   "day": "2026-09-14",
   "anchor": {"id": "send-invoice", "text": "Invoice to Sam goes out today. The one rule.", "doneText": "Invoice SENT. That was the whole game."},
   "cards": [
@@ -111,7 +111,7 @@ for a reason (e.g. one boss deliberately on top because the day is short).
 ### 4. Build it
 
 ```bash
-python3 <skill-dir>/scripts/build.py deck.json --out ticket-run.html
+python3 <skill-dir>/scripts/build.py deck.json --out loop-closer.html
 ```
 
 It validates the deck, prints the dealt sequence as plain text, and writes the page. Read the
@@ -132,7 +132,7 @@ warnings: a missing first move on a BOSS is the kind of thing that makes the car
   progress may not survive a refresh inside the artifact viewer, so cash out and copy the recap
   before closing; and "publish" on the artifact gives them a link that works on a phone.
 - **Otherwise** (a terminal with a filesystem), write the file somewhere that won't vanish and
-  open it: `open ticket-run.html` on macOS. Say where it is.
+  open it: `open loop-closer.html` on macOS. Say where it is.
 
 ### 6. Hand it over in under ten lines
 

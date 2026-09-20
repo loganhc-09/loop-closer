@@ -1,10 +1,10 @@
 # Loop Closer
 
-Every open loop in your head, out on the table and closed by tonight. (Task Tinder, dopamine edition. The install command is still `ticket-run`.)
+Every open loop in your head, out on the table and closed by tonight. (Task Tinder, dopamine edition.)
 
 You know the loops: the reply you owe, the form that's been open in a tab for a week, the thing you've been avoiding so long it's grown teeth. They don't sit still. They circle, and every lap costs you a little. This gets all of them out of your head in five minutes, turns each one into a card with a first move you could do half-asleep, and deals them in an order that makes closing them feel like a game instead of a reckoning.
 
-**Try it right now, no install:** https://loganhc-09.github.io/ticket-run-skill/
+**Try it right now, no install:** https://loganhc-09.github.io/loop-closer/
 
 ## How this got made
 
@@ -26,7 +26,7 @@ The third message turned a one-day artifact into this skill. You say "brain dump
 
 **In Claude (app or website).** You need a paid plan.
 
-1. Download **ticket-run.skill** from the [Releases page](https://github.com/loganhc-09/ticket-run-skill/releases/latest). Don't unzip it.
+1. Download **loop-closer.skill** from the [Releases page](https://github.com/loganhc-09/loop-closer/releases/latest). Don't unzip it.
 2. claude.ai → your name (bottom-left) → **Settings** → **Capabilities** → **Skills** → **Upload skill**. Pick the file.
 3. New chat. Type **brain dump**. Set a timer, talk or type, hit send.
 4. Tap the deck's open-in-new-tab button so the cards have room. Before you close it, tap **cash out** and **copy recap**.
@@ -36,13 +36,13 @@ No Skills section in step 2? Your plan doesn't have custom skills on yet. The de
 **Claude Code:**
 
 ```
-/plugin marketplace add loganhc-09/ticket-run-skill
-/plugin install ticket-run@ticket-run
+/plugin marketplace add loganhc-09/loop-closer
+/plugin install loop-closer@loop-closer
 ```
 
-**Cursor:** unzip `ticket-run.skill`, drop the `ticket-run` folder into `~/.cursor/skills/`.
+**Cursor:** unzip `loop-closer.skill`, drop the `loop-closer` folder into `~/.cursor/skills/`.
 
-Trigger phrases: "brain dump", "task tinder", "ticket run", "I have a million things", "make today a game". Or paste the list and say you can't start.
+Trigger phrases: "brain dump", "close my loops", "loop closer", "task tinder", "I have a million things", "make today a game". Or paste the list and say you can't start.
 
 ## What Claude does with your dump
 
@@ -63,19 +63,19 @@ Open an Issue.
 ## Layout
 
 ```
-plugins/ticket-run/skills/ticket-run/
+plugins/loop-closer/skills/loop-closer/
 ├── SKILL.md                     the flow and the rules
 ├── references/sequencing.md     sizing, first moves, dealing order
 ├── references/hacks.md          the 24 mechanics and what they mean for copy
 ├── scripts/build.py             deck.json → page
-└── assets/ticket-run.template.html
+└── assets/loop-closer.template.html
 ```
 
 Rebuild the demo page from the sample dump:
 
 ```
-python3 plugins/ticket-run/skills/ticket-run/scripts/build.py \
-  plugins/ticket-run/skills/ticket-run/assets/example-deck.json --out demo.html
+python3 plugins/loop-closer/skills/loop-closer/scripts/build.py \
+  plugins/loop-closer/skills/loop-closer/assets/example-deck.json --out demo.html
 ```
 
 MIT licensed. Early build; edges still being sanded.

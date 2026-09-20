@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "ticket-run",
-  "description": "Ticket Run: turn a brain dump into a swipeable, game-like task deck for one day.",
+  "name": "loop-closer",
+  "description": "Loop Closer: every open loop in your head, out and closed by tonight. Turn a brain dump into a swipeable, game-like task deck for one day.",
   "owner": {
-    "name": "Ticket Run"
+    "name": "Loop Closer"
   },
   "plugins": [
     {
-      "name": "ticket-run",
-      "source": "./plugins/ticket-run",
+      "name": "loop-closer",
+      "source": "./plugins/loop-closer",
       "category": "productivity",
       "description": "Dump everything on your mind; Claude sizes each item, writes a 2-minute first move for it, sequences quick wins before the big scary thing, and ships a one-page app with XP, timers, random tickets, and a cash-out recap."
     }

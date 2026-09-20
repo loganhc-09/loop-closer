@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Ticket Run</title>
+<title>Loop Closer</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap">
 <style>
 :root{
@@ -192,7 +192,7 @@ body.shake{animation:bodyshake .4s}
 
 <div class="app">
   <div class="marquee">
-    <div><h1 id="h1">Ticket Run</h1><div class="date" id="dateLine"></div></div>
+    <div><h1 id="h1">Loop Closer</h1><div class="date" id="dateLine"></div></div>
     <div class="clock" id="clock">--:--</div>
   </div>
 
@@ -344,7 +344,7 @@ body.shake{animation:bodyshake .4s}
 
 <script>
 // ───────────────────────── CONFIG (injected by build.py) ─────────────────────────
-const CFG={"title": "Ticket Run", "tagline": "Task Tinder, jacked", "day": "2026-09-14", "dateLine": "Mon · Sep 14 2026", "goals": [3, 4, 6], "anchor": {"id": "send-invoice", "text": "Sam's invoice goes out today. The one rule.", "doneText": "Invoice SENT. That was the whole game."}, "bundle": [{"key": "coffee", "label": "☕ coffee"}, {"key": "playlist", "label": "🎧 the playlist"}, {"key": "snack", "label": "🍫 snack"}, {"key": "sun", "label": "☀️ window seat"}], "rounds": {"morning": "Morning. Whole day is yours now. Texts, then the quick replies. Build the combo.", "midday": "Early afternoon. Mediums and one large. One card, one timer.", "afternoon": "Late afternoon. Boss window. Take the big one while the energy holds.", "night": "Evening. Whatever's due is the only card that matters. Then cash out."}, "setupSummary": "Your list is loaded: 2 texts, 1 quick email, 1 small, 3 mediums, 2 larges, 1 boss.", "cards": [{"id": "text-dana", "size": "S", "tag": "text", "title": "Text Dana about Saturday", "first": "\"Hey, still on for Sat? 10 works for me.\" Send."}, {"id": "text-mom", "size": "S", "tag": "text", "title": "Text Mom back", "first": "\"Sorry, crazy week. Call you Sunday?\" Send."}, {"id": "reply-landlord", "size": "S", "tag": "email", "title": "Reply to the landlord about the leak", "first": "Open his email. \"Thursday morning works, anytime after 9.\" Send."}, {"id": "dentist", "size": "S", "tag": "call", "title": "Book the dentist", "first": "Call, or use the online form. First slot they have in October. Done."}, {"id": "decide-conf", "size": "M", "title": "Decide whether to go to the November conference", "first": "Pick one: (a) go, (b) skip, (c) ask if they'll comp the ticket. Then send the email that matches. Deciding is the task."}, {"id": "fix-bio", "size": "M", "title": "Fix the bio on the website", "first": "Open the about page. Replace the first paragraph with what you'd say out loud. Ship it."}, {"id": "review-priya", "size": "L", "tag": "doc", "title": "Review Priya's proposal draft", "first": "Open it. Comment on the intro only. Then the next section if the timer's still running."}, {"id": "expense-report", "size": "L", "title": "Do the expense report", "first": "Open the form. Enter the three receipts you can see in your inbox. Submit what you have."}, {"id": "deck-v2", "size": "BOSS", "title": "Rework the pitch deck for Thursday", "first": "Open the deck. Fix slide 2 only. Stop there if you need to."}, {"id": "send-invoice", "size": "M", "tag": "email", "due": "today", "title": "Send the September invoice to Sam", "first": "Open last month's invoice. Duplicate it. Change the dates and line items. Send."}]};
+const CFG={"title": "Loop Closer", "tagline": "Task Tinder, jacked", "day": "2026-09-14", "dateLine": "Mon · Sep 14 2026", "goals": [3, 4, 6], "anchor": {"id": "send-invoice", "text": "Sam's invoice goes out today. The one rule.", "doneText": "Invoice SENT. That was the whole game."}, "bundle": [{"key": "coffee", "label": "☕ coffee"}, {"key": "playlist", "label": "🎧 the playlist"}, {"key": "snack", "label": "🍫 snack"}, {"key": "sun", "label": "☀️ window seat"}], "rounds": {"morning": "Morning. Whole day is yours now. Texts, then the quick replies. Build the combo.", "midday": "Early afternoon. Mediums and one large. One card, one timer.", "afternoon": "Late afternoon. Boss window. Take the big one while the energy holds.", "night": "Evening. Whatever's due is the only card that matters. Then cash out."}, "setupSummary": "Your list is loaded: 2 texts, 1 quick email, 1 small, 3 mediums, 2 larges, 1 boss.", "cards": [{"id": "text-dana", "size": "S", "tag": "text", "title": "Text Dana about Saturday", "first": "\"Hey, still on for Sat? 10 works for me.\" Send."}, {"id": "text-mom", "size": "S", "tag": "text", "title": "Text Mom back", "first": "\"Sorry, crazy week. Call you Sunday?\" Send."}, {"id": "reply-landlord", "size": "S", "tag": "email", "title": "Reply to the landlord about the leak", "first": "Open his email. \"Thursday morning works, anytime after 9.\" Send."}, {"id": "dentist", "size": "S", "tag": "call", "title": "Book the dentist", "first": "Call, or use the online form. First slot they have in October. Done."}, {"id": "decide-conf", "size": "M", "title": "Decide whether to go to the November conference", "first": "Pick one: (a) go, (b) skip, (c) ask if they'll comp the ticket. Then send the email that matches. Deciding is the task."}, {"id": "fix-bio", "size": "M", "title": "Fix the bio on the website", "first": "Open the about page. Replace the first paragraph with what you'd say out loud. Ship it."}, {"id": "review-priya", "size": "L", "tag": "doc", "title": "Review Priya's proposal draft", "first": "Open it. Comment on the intro only. Then the next section if the timer's still running."}, {"id": "expense-report", "size": "L", "title": "Do the expense report", "first": "Open the form. Enter the three receipts you can see in your inbox. Submit what you have."}, {"id": "deck-v2", "size": "BOSS", "title": "Rework the pitch deck for Thursday", "first": "Open the deck. Fix slide 2 only. Stop there if you need to."}, {"id": "send-invoice", "size": "M", "tag": "email", "due": "today", "title": "Send the September invoice to Sam", "first": "Open last month's invoice. Duplicate it. Change the dates and line items. Send."}]};
 const XP={S:10,M:25,L:50,BOSS:100};
 const SEED=CFG.cards;
 const DECK_VERSION=1;
@@ -382,7 +382,7 @@ const HACKS=[
  ['Self-compassion (Neff)','Skips cost nothing, shelving gets kind copy. Shame is the procrastination engine, not the cure.'],
  ['Tab-title timer + wake lock + haptics','The countdown lives in the browser tab so you see it from your inbox. Screen stays on, phone buzzes on clears.'],
 ];
-const KEY='ticket-run-'+CFG.day;
+const KEY='loop-closer-'+CFG.day;
 const ANCHOR=CFG.anchor||null;
 
 // ───────────────────────── STATE ─────────────────────────
