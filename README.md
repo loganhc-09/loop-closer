@@ -1,6 +1,8 @@
-# Ticket Run
+# Loop Closer
 
-Brain dump in, swipeable task deck out. One day, one deck.
+Every open loop in your head, out on the table and closed by tonight. (Task Tinder, dopamine edition. The install command is still `ticket-run`.)
+
+You know the loops: the reply you owe, the form that's been open in a tab for a week, the thing you've been avoiding so long it's grown teeth. They don't sit still. They circle, and every lap costs you a little. This gets all of them out of your head in five minutes, turns each one into a card with a first move you could do half-asleep, and deals them in an order that makes closing them feel like a game instead of a reckoning.
 
 **Try it right now, no install:** https://loganhc-09.github.io/ticket-run-skill/
 
@@ -18,7 +20,7 @@ Then, the next day:
 
 That's it. No spec, no wireframe. The second message is where every mechanic in the app came from: XP, combo multiplier, random tickets with a jackpot, focus timer, a "shrink it" door for cards that feel like a wall, recess every three clears, a cash-out recap that ends on a high. Claude pulled 24 named hacks from ADHD coaching and UX research and mapped each one to a mechanic. The app lists them under "hacks in play" so you can see what's being done to you.
 
-The third message turned a one-day artifact into this skill. You say "brain dump," Claude takes whatever comes out, and the deck shows up.
+The third message turned a one-day artifact into this skill. You say "brain dump," Claude takes whatever comes out, and the deck shows up. Close a loop, swipe, next.
 
 ## Use it
 
@@ -44,7 +46,7 @@ Trigger phrases: "brain dump", "task tinder", "ticket run", "I have a million th
 
 ## What Claude does with your dump
 
-- Takes it as-is. No item-by-item interrogation. Show up empty-handed and it runs a 5-minute guided dump instead.
+- Takes it as-is. No item-by-item interrogation. Show up empty-handed and it runs a 5-minute guided dump instead: walk the rooms in your head, name every loop that's open.
 - One card per task: a size (S ≤5 min, M ~15, L ~30, BOSS 45+ or long-avoided), a first move you could do half-asleep, and one anchor if something's due today.
 - Deals the deck so quick wins build a combo before the big scary thing.
 - When you come back with the recap, celebrates first. Skips are never counted.
