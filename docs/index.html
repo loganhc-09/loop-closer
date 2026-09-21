@@ -257,6 +257,7 @@ body.shake{animation:bodyshake .4s}
   <div><p class="note" style="margin-bottom:6px">THE ONE YOU MOST WANT OUT OF YOUR HEAD BY TONIGHT</p><div class="pills" id="stakePick"></div></div>
   <p class="note">You already have +15 XP for showing up and reading this. Head start's real.</p>
   <div class="row"><button class="primary" id="setupGo">DEAL ME IN</button></div>
+  <p class="note" style="text-align:center;margin-top:10px">free, open source. <a href="https://github.com/loganhc-09/loop-closer" target="_blank" rel="noopener" style="color:var(--cobalt)">source + install on github</a></p>
 </div></div>
 
 <!-- FOCUS -->
@@ -676,7 +677,7 @@ $('tonightBtn').onclick=()=>{if(!ANCHOR)return;S.order=S.order.filter(x=>x!==ANC
 
 // ───────────────────────── SETUP (from CFG) ─────────────────────────
 $('cCta').innerHTML='<span>'+esc(CTA.text)+'</span><a class="btn" href="'+esc(CTA.href)+'" target="_blank" rel="noopener">'+esc(CTA.label)+' →</a>';
-$('helpCredit').innerHTML='Loop Closer is by <a href="https://www.logancurrie.com" target="_blank" rel="noopener">Logan Currie</a>. Free, open source. Her Sunday newsletter is <a href="'+esc(CTA.href)+'" target="_blank" rel="noopener">Womansplaining AI</a>.';
+$('helpCredit').innerHTML='Loop Closer is by <a href="https://www.logancurrie.com" target="_blank" rel="noopener">Logan Currie</a>. Free, <a href="https://github.com/loganhc-09/loop-closer" target="_blank" rel="noopener">open source</a>. Her Sunday newsletter is <a href="'+esc(CTA.href)+'" target="_blank" rel="noopener">Womansplaining AI</a>.';
 if(CFG.imported){$('resetRow').hidden=false;$('resetDeck').onclick=()=>{try{localStorage.removeItem('loop-closer-import');localStorage.removeItem(KEY)}catch(e){}location.reload()}}
 document.title=CFG.title;$('h1').textContent=CFG.title;$('dateLine').textContent=CFG.dateLine+(CFG.tagline?' · '+CFG.tagline:'');
 $('setupSummary').textContent='Two picks and you\'re dealt in. '+(CFG.setupSummary||'');
